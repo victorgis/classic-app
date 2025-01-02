@@ -21,20 +21,20 @@ export default function RootLayout() {
   }, []);
 
   return (
-    // <GestureHandlerRootView style={{ flex: 1 }}>
-    // {/* <AuthProvider> */}
-    <Stack>
-      <Stack.Screen
-        name="(home)"
-        options={{ headerShown: true, title: "HomeScreen" }}
-      />
-      <Stack.Screen
-        name="index"
-        options={{ headerShown: true, title: "Main" }}
-      />
-    </Stack>
-    // <Slot />
-    // {/* </AuthProvider> */}
-    // </GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      // {/* <AuthProvider> */}
+      <Stack>
+        <Stack.Screen
+          name="(home)"
+          options={{ headerShown: true, title: "HomeScreen" }}
+        />
+        <Stack.Screen
+          name="index"
+          options={{ headerShown: false, title: "Main" }}
+        />
+      </Stack>
+      {/* <Slot /> */}
+      // {/* </AuthProvider> */}
+    </GestureHandlerRootView>
   );
 }
