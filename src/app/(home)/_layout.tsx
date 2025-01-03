@@ -1,60 +1,48 @@
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, Slot, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { StreamChat } from "stream-chat";
+import { Chat, OverlayProvider } from "stream-chat-expo";
 
-const TabsLayout: React.FC = () => {
+const client = StreamChat.getInstance("dwfrzvgbasbd");
+
+const HomeLayout: React.FC = () => {
   //   const { session, mounting } = useAuth();
   //   if (mounting) return <ActivityIndicator />;
   //   if (!session) return <Redirect href="/auth" />;
+  useEffect(() => {
+    const connect = async () => {
+      await client.connectUser(
+        {
+          id: "jlahey",
+          name: "Jim Lahey",
+          image: "https://i.imgur.com/fR9Jz14.png",
+        },
+        client.devToken("jlahey")
+      );
+
+      // const channel = client.channel("messaging", "the_park", {
+      //   name: "The Park",
+      // });
+      // await channel.watch();
+    };
+    connect();
+  });
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "#003249",
-        tabBarInactiveTintColor: "grey",
-        tabBarLabelStyle: { fontSize: 10 },
-        tabBarStyle: { backgroundColor: "#fff" },
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="home"
-              size={24}
-              style={{
-                color: focused ? "#003249" : "gray",
-                transform: [{ scale: focused ? 1.2 : 1 }],
-              }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="setting"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="settings"
-              size={24}
-              style={{
-                color: focused ? "#003249" : "gray",
-                transform: [{ scale: focused ? 1.2 : 1 }],
-              }}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+    <OverlayProvider>
+      <Chat client={client}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+      </Chat>
+    </OverlayProvider>
   );
 };
 
-export default TabsLayout;
+export default HomeLayout;
 
 const styles = StyleSheet.create({
   safeArea: {
