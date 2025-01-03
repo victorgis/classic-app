@@ -1,4 +1,7 @@
 import { Redirect, Tabs, Slot, Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { StreamChat } from "stream-chat";
 import ChatProvider from "../../providers/ChatProvider";
 import { useAuth } from "@/src/providers/AuthProvider";
