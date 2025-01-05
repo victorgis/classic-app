@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
-import { StyleSheet, View, Alert, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, Alert, Button, TouchableOpacity, Text } from "react-native";
 import { Input } from "@rneui/themed";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -182,6 +182,9 @@ export default function ProfileScreen() {
       <View style={styles.option}>
         <MaterialIcons name="block" size={24} color="#555" />
         <Text style={styles.optionText}>Block List</Text>
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
     </View>
   );
