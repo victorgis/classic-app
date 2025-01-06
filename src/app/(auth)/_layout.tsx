@@ -17,7 +17,7 @@ export default function AuthLayout() {
   const { user } = useAuth();
 
   if (user) {
-    console.log(user); // Ensure this logs the user object correctly
+    // console.log(user); // Ensure this logs the user object correctly
     // return <Redirect href="/(home)/(tabs)" />; // Return the Redirect component
     return <Redirect href="/(home)" />; // Return the Redirect component
     // return <Redirect href="/(home)/screens/profile" />; // Return the Redirect component

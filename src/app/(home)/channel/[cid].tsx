@@ -12,15 +12,13 @@ import {
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
-  const { cid } = useLocalSearchParams<{cid: string}>();
+  const { cid } = useLocalSearchParams<{ cid: string }>();
   const { client } = useChatContext();
 
   useEffect(() => {
-
-    // console.log("cid", cid);
     const fetchChannel = async () => {
       const channels = await client.queryChannels({ cid });
-       console.log("channels", channels[0]);
+      console.log("channels", channels[0]);
       setChannel(channels[0]);
     };
     fetchChannel();
@@ -33,7 +31,7 @@ export default function ChannelScreen() {
   return (
     <Channel channel={channel}>
       <MessageList />
-      <SafeAreaView edges={['bottom']}>
+      <SafeAreaView edges={["bottom"]}>
         <MessageInput />
       </SafeAreaView>
     </Channel>

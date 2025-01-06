@@ -1,6 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../../lib/supabase";
-import { StyleSheet, View, Alert, Button, TouchableOpacity, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Button,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { Input } from "@rneui/themed";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -195,7 +202,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     backgroundColor: "#fff",
-    paddingHorizontal: RFValue(25 ),
+    paddingHorizontal: RFValue(25),
   },
   avatar: {
     alignItems: "center",

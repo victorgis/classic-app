@@ -5,6 +5,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { router } from "expo-router";
 
 const UserListItem = ({ user }) => {
+  // mark these two 
   const { client } = useChatContext();
   const { user: me } = useAuth();
 

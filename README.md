@@ -48,3 +48,14 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+npx supabase start
+npx supabase functions new stream-token
+npx supabase functions serve
+<!-- npx supabase status -->
+
+npx supabase functions serve --env-file supabase/.env.local
+cp ./supabase/.env.local ./supabase/.env
+npx supabase secrets set --env-file ./supabase/.env
+npx supabase secrets list
+npx supabase functions deploy

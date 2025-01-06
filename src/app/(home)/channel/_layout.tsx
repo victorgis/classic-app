@@ -1,5 +1,9 @@
 import { Stack } from "expo-router";
 
+
+import { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+
 export default function ChannelStack() {
   return (
     <Stack>
