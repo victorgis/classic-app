@@ -5,6 +5,23 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function MainTabScreen() {
   const { user } = useAuth();
+  const userID = user.id;
+  const filter = { members: { $in: [userID] } };
+  const bothMembers = {
+    $and: [
+      { type: "messaging" },
+      {
+        members: {
+          $in: ["steve"],
+        },
+      },
+      {
+        members: {
+          $in: ["george"],
+        },
+      },
+    ],
+  };
   return (
     <>
       <Stack.Screen
@@ -36,18 +53,18 @@ export default function MainTabScreen() {
         }}
       />
       <ChannelList
-        // filters={{ members: { $in: [user.id] } }}
-        filters={{
-          cid: {
-            $in: [
-              "messaging:classic-app-oj6pmgasy",
-              "messaging:enesi",
-              "messaging:channel_id2",
-              "messaging:channel_id",
-              "messaging:!members-Y9SlPavAIH58v_nqHxXoFWpqGP07A-QLpeRWuba5qxE",
-            ],
-          },
-        }}
+        filters={filter}
+        // filters={{
+        //   cid: {
+        //     $in: [
+        //       "messaging:classic-app-oj6pmgasy",
+        //       "messaging:enesi",
+        //       "messaging:channel_id2",
+        //       "messaging:channel_id",
+        //       "messaging:!members-Y9SlPavAIH58v_nqHxXoFWpqGP07A-QLpeRWuba5qxE",
+        //     ],
+        //   },
+        // }}
         onSelect={(channel) => router.push(`/channel/${channel.cid}`)}
       />
     </>
