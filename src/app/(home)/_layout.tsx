@@ -21,6 +21,10 @@ const HomeLayout: React.FC = () => {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="createInterest"
+          options={{ headerShown: true, title: "Create Interest" }}
+        />
       </Stack>
       {/* <Slot /> */}
     </ChatProvider>

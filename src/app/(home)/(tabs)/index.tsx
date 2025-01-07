@@ -36,7 +36,18 @@ export default function MainTabScreen() {
         }}
       />
       <ChannelList
-        filters={{ members: { $in: [user.id] } }}
+        // filters={{ members: { $in: [user.id] } }}
+        filters={{
+          cid: {
+            $in: [
+              "messaging:classic-app-oj6pmgasy",
+              "messaging:enesi",
+              "messaging:channel_id2",
+              "messaging:channel_id",
+              "messaging:!members-Y9SlPavAIH58v_nqHxXoFWpqGP07A-QLpeRWuba5qxE",
+            ],
+          },
+        }}
         onSelect={(channel) => router.push(`/channel/${channel.cid}`)}
       />
     </>

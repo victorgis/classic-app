@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-// import { ChannelList } from "stream-chat-expo";
 import { Link, router } from "expo-router";
 import MainTabScreen from "./(tabs)";
 import { ChannelList } from "stream-chat-expo";
-// import Indexs from "../(home)/(tabs)/index"
+import Indexs from "../(home)/(tabs)/index"
+// import CreateInterestScreen from "./screens/createInterest";
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("Tab1");
@@ -25,14 +25,15 @@ const MainScreen = () => {
       return (
         <>
           {/* <MainTabScreen /> */}
-          {/* <Indexs /> */}
+          <Indexs />
           {/* <ChannelList /> */}
         </>
       );
     } else if (activeTab === "Tab2") {
       return (
         <>
-          <MainTabScreen />
+          {/* <MainTabScreen /> */}
+
         </>
       );
     }
@@ -43,7 +44,7 @@ const MainScreen = () => {
       {/* Top menu section */}
       <View style={styles.topMenuContainer}>
         <View style={styles.topMenuLeft}>
-          <Link href={'/(home)/screens/profile'}>
+          <Link href={"/(home)/screens/profile"}>
             <Image
               source={staticImg}
               style={{ width: 25, height: 25, borderRadius: 20 }}
@@ -64,9 +65,15 @@ const MainScreen = () => {
       </View>
 
       {/* Add button section  */}
-      <View style={styles.addButton}>
-        <MaterialIcons name="add-circle" color={"#6E00FF"} size={RFValue(50)} />
-      </View>
+      <Link href={"/(home)/screens/createInterest"}>
+        <View style={styles.addButton}>
+          <MaterialIcons
+            name="add-circle"
+            color={"#6E00FF"}
+            size={RFValue(50)}
+          />
+        </View>
+      </Link>
 
       {/* Hidden search box section */}
       <View style={styles.searchMenuContainer}>

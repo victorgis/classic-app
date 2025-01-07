@@ -41,6 +41,10 @@ export default function RootLayout() {
             name="profile"
             options={{ headerShown: false, title: "Profile" }}
           />
+          <Stack.Screen
+            name="createInterest"
+            options={{ headerShown: true, title: "Create Interest" }}
+          />
         </Stack>
         {/* <Slot /> */}
       </AuthProvider>
