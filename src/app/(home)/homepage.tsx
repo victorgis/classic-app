@@ -18,8 +18,15 @@ import MyInterestChannelsScreen from "./(tabs)/myInterest";
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("Tab1");
+  const [showSearch, setShowSearch] = useState(false);
 
   const staticImg = require("../../../assets/images/avatar.png");
+
+  const showSearchFx = () => {
+    if (showSearch == false) setShowSearch(true);
+    else setShowSearch(false);
+  };
+
   const renderContent = () => {
     if (activeTab === "Tab1") {
       return (
@@ -35,7 +42,6 @@ const MainScreen = () => {
       );
     }
   };
-
   return (
     <View style={styles.container}>
       {/* Top menu section */}
@@ -49,9 +55,11 @@ const MainScreen = () => {
           </Link>
         </View>
         <View style={styles.topMenuRight}>
-          <View style={{ paddingLeft: RFValue(20) }}>
-            <MaterialIcons name="search" size={RFValue(20)} />
-          </View>
+          <TouchableOpacity onPress={showSearchFx}>
+            <View style={{ paddingLeft: RFValue(20) }}>
+              <MaterialIcons name="search" size={RFValue(20)} />
+            </View>
+          </TouchableOpacity>
           <View style={{ paddingLeft: RFValue(20) }}>
             <Ionicons name="notifications-outline" size={RFValue(17)} />
           </View>
@@ -73,27 +81,29 @@ const MainScreen = () => {
       </Link>
 
       {/* Hidden search box section */}
-      <View style={styles.searchMenuContainer}>
-        <View style={styles.searchContainer}>
+      {showSearch && (
+        <View style={styles.searchMenuContainer}>
+          <View style={styles.searchContainer}>
+            <MaterialIcons
+              name="search"
+              size={20}
+              color="#888"
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Search"
+              placeholderTextColor="#888"
+            />
+          </View>
           <MaterialIcons
-            name="search"
-            size={20}
-            color="#888"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Search"
-            placeholderTextColor="#888"
+            name="filter-list"
+            size={24}
+            color="#6E00FF"
+            style={styles.filterIcon}
           />
         </View>
-        <MaterialIcons
-          name="filter-list"
-          size={24}
-          color="#555"
-          style={styles.filterIcon}
-        />
-      </View>
+      )}
 
       {/* Tabs section */}
       <View style={styles.twoTabs}>
@@ -187,6 +197,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 2,
     borderBottomColor: "#f2f2f2",
+    marginTop: RFValue(15)
   },
   tab: {
     // flex: 1,
@@ -210,8 +221,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    right: RFValue(30),
-    bottom: RFValue(100),
+    right: RFValue(20),
+    bottom: RFValue(70),
     width: RFValue(60),
     zIndex: 1,
   },

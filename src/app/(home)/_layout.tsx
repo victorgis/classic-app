@@ -5,6 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { StreamChat } from "stream-chat";
 import ChatProvider from "../../providers/ChatProvider";
 import { useAuth } from "@/src/providers/AuthProvider";
+import SafeAreaWrapper from "@/src/hook/SafeAreaWrapper";
 
 const HomeLayout: React.FC = () => {
   //   const { session, mounting } = useAuth();
@@ -17,18 +18,26 @@ const HomeLayout: React.FC = () => {
   }
 
   return (
-    <ChatProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="createInterest"
-          options={{ headerShown: true, title: "Create Interest" }}
-        />
-      </Stack>
-      {/* <Slot /> */}
-    </ChatProvider>
+    <SafeAreaWrapper style={[styles.safeArea]}>
+      <ChatProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="homepage" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="createInterest"
+            options={{ headerShown: true, title: "Create Interest" }}
+          />
+        </Stack>
+        {/* <Slot /> */}
+      </ChatProvider>
+    </SafeAreaWrapper>
   );
 };
 
 export default HomeLayout;
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+});

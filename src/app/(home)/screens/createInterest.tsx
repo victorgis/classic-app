@@ -10,7 +10,7 @@ import { useChatContext } from "stream-chat-expo";
 import { router } from "expo-router";
 
 export default function CreateInterestScreen() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const { client } = useChatContext();
   const [loading, setLoading] = useState(false);
   const [interestId, setInterestId] = useState("");
@@ -45,32 +45,18 @@ export default function CreateInterestScreen() {
 
       const newChannel = client.channel("messaging", interest_id, {
         name: interest_name,
+        members: [user.id],
         watch: true, // this is the default
         state: true,
       });
       await newChannel.watch();
 
-      const updates = {
-        id: session.user.id,
-        interest_id,
-        interest_avatar_url,
-        interest_name,
-        updated_at: new Date(),
-      };
+  
 
       if (newChannel){
-        router.push(`/(home)/screens/getInterest`);
+        router.push(`/(home)/homepage`);
       }
 
-      
-
-      // const { error } = await supabase.from("interests").upsert(updates);
-
-      // if (error) {
-      //   throw error;
-      // } else {
-      //   Alert.alert("Interest created successfully!");
-      // }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -135,7 +121,7 @@ export default function CreateInterestScreen() {
               interest_name: interestName,
             })
           }
-          returnKeyType="done"
+          // returnKeyType="done"
           labelStyle={{
             color: "#555",
             fontSize: 14,

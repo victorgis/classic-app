@@ -1,43 +1,17 @@
-import { Link, Redirect, Stack, router } from "expo-router";
+import { router } from "expo-router";
 import { ChannelList } from "stream-chat-expo";
 import { useAuth } from "../../../providers/AuthProvider";
-import { FontAwesome5 } from "@expo/vector-icons";
+import CustomHeader from "@/src/component/CustomHeader";
 
 export default function AllChannelsScreen() {
   const { user } = useAuth();
   const userID = user.id;
-  const filter = {};
+  const filter = {}; // Example filter for channels with the user as a member.
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <Link href={"/(home)/users"} asChild>
-              <FontAwesome5
-                name="users"
-                size={22}
-                color="gray"
-                style={{ marginHorizontal: 15 }}
-              />
-            </Link>
-          ),
-        }}
-      />
-      <Stack.Screen
-        options={{
-          headerLeft: () => (
-            <Link href={"/(home)/channelScreen"} asChild>
-              <FontAwesome5
-                name="users"
-                size={22}
-                color="gray"
-                style={{ marginHorizontal: 15 }}
-              />
-            </Link>
-          ),
-        }}
-      />
+      {/* <CustomHeader name="Interests" /> */}
+
       <ChannelList
         filters={filter}
         onSelect={(channel) => router.push(`/channel/${channel.cid}`)}
