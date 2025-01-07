@@ -45,7 +45,7 @@ export default function CreateInterestScreen() {
 
       const newChannel = client.channel("messaging", interest_id, {
         name: interest_name,
-        members: [user.id],
+        // members: [user.id],
         watch: true, // this is the default
         state: true,
       });
@@ -114,13 +114,13 @@ export default function CreateInterestScreen() {
               />
             </TouchableOpacity>
           }
-          onSubmitEditing={() =>
-            createInterest({
-              interest_id: interestId,
-              interest_avatar_url: interestAvatarUrl,
-              interest_name: interestName,
-            })
-          }
+          // onSubmitEditing={() =>
+          //   createInterest({
+          //     interest_id: interestId,
+          //     interest_avatar_url: interestAvatarUrl,
+          //     interest_name: interestName,
+          //   })
+          // }
           // returnKeyType="done"
           labelStyle={{
             color: "#555",
@@ -136,6 +136,11 @@ export default function CreateInterestScreen() {
             borderBottomColor: "#ddd",
           }}
         />
+      </View>
+      <View style={[{alignItems:"center", backgroundColor: "#ccc"}]}>
+        <TouchableOpacity>
+          <Ionicons name="checkmark" size={25} />
+        </TouchableOpacity>
       </View>
     </View>
   );
