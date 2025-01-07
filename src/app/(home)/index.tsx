@@ -13,8 +13,8 @@ import { useEffect, useState } from "react";
 import { Link, router } from "expo-router";
 import MainTabScreen from "./(tabs)";
 import { ChannelList } from "stream-chat-expo";
-import Indexs from "../(home)/(tabs)/index"
-// import CreateInterestScreen from "./screens/createInterest";
+import AllChannelsScreen from "./(tabs)";
+import MyInterestChannelsScreen from "./(tabs)/myInterest";
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("Tab1");
@@ -24,16 +24,13 @@ const MainScreen = () => {
     if (activeTab === "Tab1") {
       return (
         <>
-          {/* <MainTabScreen /> */}
-          <Indexs />
-          {/* <ChannelList /> */}
+          <MyInterestChannelsScreen />
         </>
       );
     } else if (activeTab === "Tab2") {
       return (
         <>
-          {/* <MainTabScreen /> */}
-
+          <AllChannelsScreen />
         </>
       );
     }
@@ -65,8 +62,8 @@ const MainScreen = () => {
       </View>
 
       {/* Add button section  */}
-      <Link href={"/(home)/screens/createInterest"}>
-        <View style={styles.addButton}>
+      <Link style={styles.addButton} href={"/(home)/screens/createInterest"}>
+        <View>
           <MaterialIcons
             name="add-circle"
             color={"#6E00FF"}
@@ -206,20 +203,16 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16),
     color: "#555",
   },
-  screenContent: {
-    // flex: 1,
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
+  screenContent: {},
   tabContentText: {
     fontSize: RFValue(18),
     color: "#333",
   },
   addButton: {
     position: "absolute",
-    right: RFValue(20),
-    bottom: RFValue(70),
+    right: RFValue(30),
+    bottom: RFValue(100),
     width: RFValue(60),
-    zIndex: 1
+    zIndex: 1,
   },
 });

@@ -3,10 +3,13 @@ import { ChannelList } from "stream-chat-expo";
 import { useAuth } from "../../../providers/AuthProvider";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-export default function AllChannelsScreen() {
+export default function MyInterestChannelsScreen() {
   const { user } = useAuth();
   const userID = user.id;
-  const filter = {};
+  const filter = {
+    // last_message_at: { $exists: true },
+    members: { $in: [userID] },
+  };
 
   return (
     <>
