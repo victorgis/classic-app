@@ -5,7 +5,7 @@ import { Input } from "@rneui/themed";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
 import Avatar from "@/src/component/Avatar";
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { useChatContext } from "stream-chat-expo";
 import { router } from "expo-router";
 
@@ -42,21 +42,21 @@ export default function CreateInterestScreen() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-
+      const interestImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${interest_avatar_url}`;
+      console.log("imageOOO", interestImg);
       const newChannel = client.channel("messaging", interest_id, {
         name: interest_name,
         // members: [user.id],
+        image: interestImg,
         watch: true, // this is the default
         state: true,
       });
       await newChannel.watch();
 
-  
-
-      if (newChannel){
+      if (newChannel) {
+        Alert.alert("Success", "Interest Created Successfully")
         router.push(`/(home)/homepage`);
       }
-
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -68,12 +68,23 @@ export default function CreateInterestScreen() {
   }
 
   const handleIconPress = () => {
+    createInterest({
+      interest_id: interestId,
+      interest_avatar_url: interestAvatarUrl,
+      interest_name: interestName,
+    });
+    // if (isEditing) {
+    // } else {
+    //   setIsEditing(true);
+    //   setTimeout(() => {
+    //     fullNameInputRef.current?.focus();
+    //   }, 100);
+    // }
+  };
+  const handleIconPress2 = () => {
     if (isEditing) {
-      createInterest({
-        interest_id: interestId,
-        interest_avatar_url: interestAvatarUrl,
-        interest_name: interestName,
-      });
+      console.log("done typing");
+      setIsEditing(false);
     } else {
       setIsEditing(true);
       setTimeout(() => {
@@ -106,10 +117,10 @@ export default function CreateInterestScreen() {
           editable={isEditing}
           ref={fullNameInputRef}
           rightIcon={
-            <TouchableOpacity onPress={handleIconPress}>
+            <TouchableOpacity onPress={handleIconPress2}>
               <Ionicons
                 name={isEditing ? "checkmark" : "pencil"}
-                size={20}
+                size={30}
                 color={isEditing ? "green" : "#6E00FF"}
               />
             </TouchableOpacity>
@@ -137,9 +148,9 @@ export default function CreateInterestScreen() {
           }}
         />
       </View>
-      <View style={[{alignItems:"center", backgroundColor: "#ccc"}]}>
-        <TouchableOpacity>
-          <Ionicons name="checkmark" size={25} />
+      <View style={{ alignSelf: "center" }}>
+        <TouchableOpacity onPress={handleIconPress} style={styles.button}>
+          <Ionicons name="checkmark" color={"#fff"} size={25} />
         </TouchableOpacity>
       </View>
     </View>
@@ -160,5 +171,15 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingBottom: 4,
     alignSelf: "stretch",
+  },
+  button: {
+    marginTop: RFValue(30),
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#6B6B6B",
+    borderRadius: RFPercentage(50),
+    padding: RFValue(5),
+    width: RFValue(50),
+    height: RFValue(50),
   },
 });

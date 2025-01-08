@@ -1,4 +1,4 @@
-import { RFValue } from "react-native-responsive-fontsize";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import {
   StyleSheet,
   Image,
@@ -10,21 +10,44 @@ import {
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import MainTabScreen from "./(tabs)";
 import { ChannelList } from "stream-chat-expo";
 import AllChannelsScreen from "./(tabs)";
 import MyInterestChannelsScreen from "./(tabs)/myInterest";
+import { useAuth } from "@/src/providers/AuthProvider";
 
 const MainScreen = () => {
   const [activeTab, setActiveTab] = useState("Tab1");
   const [showSearch, setShowSearch] = useState(false);
+  const { profile } = useAuth();
+  const [showOptions, setShowOptions] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const staticImg = require("../../../assets/images/avatar.png");
+  const profileUrl = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
+  const finalUrl = profileUrl ? { uri: profileUrl } : staticImg;
 
   const showSearchFx = () => {
     if (showSearch == false) setShowSearch(true);
     else setShowSearch(false);
+  };
+
+  const notificationsFx = () => {
+    if (showNotifications == false) setShowNotifications(true);
+    else setShowNotifications(false);
+  };
+
+  const optionsFx = () => {
+    console.log("options pressed");
+    if (showOptions == false) setShowOptions(true);
+    else setShowOptions(false);
+  };
+
+  const privacyFX = () => {
+    // <Redirect href="/screens/profile" />;
+    router.push("/screens/profile"); // Redirects to the profile screen
+    setShowOptions(false);
   };
 
   const renderContent = () => {
@@ -47,10 +70,19 @@ const MainScreen = () => {
       {/* Top menu section */}
       <View style={styles.topMenuContainer}>
         <View style={styles.topMenuLeft}>
-          <Link href={"/(home)/screens/profile"}>
+          <Link
+            // style={{ borderWidth: 2, borderColor: "red",  }}
+            href={"/(home)/screens/profile"}
+          >
             <Image
-              source={staticImg}
-              style={{ width: 25, height: 25, borderRadius: 20 }}
+              source={finalUrl}
+              style={{
+                width: 45,
+                height: 45,
+                borderRadius: RFPercentage(50),
+                borderWidth: 0.5,
+                borderColor: "#6E00FF",
+              }}
             />
           </Link>
         </View>
@@ -60,12 +92,35 @@ const MainScreen = () => {
               <MaterialIcons name="search" size={RFValue(20)} />
             </View>
           </TouchableOpacity>
-          <View style={{ paddingLeft: RFValue(20) }}>
-            <Ionicons name="notifications-outline" size={RFValue(17)} />
-          </View>
-          <View style={{ paddingLeft: RFValue(20) }}>
-            <Ionicons name="ellipsis-vertical" size={RFValue(17)} />
-          </View>
+          <TouchableOpacity onPress={notificationsFx}>
+            <View style={{ paddingLeft: RFValue(20) }}>
+              <Ionicons name="notifications-outline" size={RFValue(17)} />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={optionsFx}>
+            <View style={{ paddingLeft: RFValue(20) }}>
+              <Ionicons name="ellipsis-vertical" size={RFValue(17)} />
+            </View>
+          </TouchableOpacity>
+          {showOptions && (
+            <View style={styles.options}>
+              <TouchableOpacity onPress={privacyFX}>
+                {" "}
+                <Text style={{ paddingVertical: RFValue(8) }}>
+                  Privacy Policy
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{ paddingVertical: RFValue(8) }}>
+                  Terms & Conditions
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{ paddingVertical: RFValue(8) }}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
 
@@ -75,6 +130,7 @@ const MainScreen = () => {
           <MaterialIcons
             name="add-circle"
             color={"#6E00FF"}
+            style={{ backgroundColor: "#fff" }}
             size={RFValue(50)}
           />
         </View>
@@ -197,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 2,
     borderBottomColor: "#f2f2f2",
-    marginTop: RFValue(15)
+    marginTop: RFValue(15),
   },
   tab: {
     // flex: 1,
@@ -225,5 +281,27 @@ const styles = StyleSheet.create({
     bottom: RFValue(70),
     width: RFValue(60),
     zIndex: 1,
+  },
+  options: {
+    position: "absolute",
+    right: RFValue(0),
+    top: RFValue(40),
+    backgroundColor: "#fff",
+    zIndex: 2,
+    borderColor: "#262626",
+    padding: RFValue(15),
+
+    // Shadow for Android
+    elevation: 5, // Adjust as needed
+
+    // Shadow for iOS
+    shadowColor: "#262626",
+    shadowOffset: { width: 0, height: 2 }, // Horizontal and vertical offset
+    shadowOpacity: 0.25, // Opacity of the shadow
+    shadowRadius: 4, // Blur radius
+
+    // Add a border for better visibility (optional)
+    // borderWidth: 1,
+    borderRadius: 8, // Rounded corners (optional)
   },
 });

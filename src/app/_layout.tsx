@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AuthProvider from "../providers/AuthProvider";
 import { useEffect } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -41,10 +42,10 @@ export default function RootLayout() {
             name="profile"
             options={{ headerShown: false, title: "Profile" }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="createInterest"
             options={{ headerShown: true, title: "Create Interest" }}
-          />
+          /> */}
         </Stack>
         {/* <Slot /> */}
       </AuthProvider>

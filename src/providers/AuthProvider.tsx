@@ -41,6 +41,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       return;
     }
 
+    // console.log("session", profile)
+
     const fetchProfile = async () => {
       let { data, error } = await supabase
         .from("profiles")

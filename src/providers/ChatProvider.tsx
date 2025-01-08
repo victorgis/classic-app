@@ -23,25 +23,18 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     }
     const connect = async () => {
       const usertoken = await tokenProvider();
-      console.log("token", usertoken);
+      const profileUrl = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
       await client.connectUser(
         {
           id: profile.id,
           name: profile.full_name,
-          image: supabase.storage
-            .from("avatars")
-            .getPublicUrl("profile.avatar_url").data.publicUrl,
+          image: profileUrl,
         },
         // client.devToken(profile.id)
         usertoken
       );
 
       setIsReady(true);
-
-      // const channel = client.channel("messaging", "the_park", {
-      //   name: "The Park",
-      // });
-      // await channel.watch();
     };
     connect();
 

@@ -33,7 +33,9 @@ export default function ChannelScreen() {
       // console.log("channels", channels[0]);
       // console.log("myID", myID);
 
-      // const members = channel.state.members;
+      const members = channel.state;
+
+      console.log("channellA", members);
 
       const memberIds = Object.keys(channel.state.members);
       // const membersDetails = Object.values(channel.state.members);
