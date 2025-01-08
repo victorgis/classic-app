@@ -27,7 +27,7 @@ export default function Auth() {
       password: password,
     });
 
-    if (error) Alert.alert(error.message);
+    if (error) Alert.alert("Error", error.message);
     setLoading(false);
   }
 
@@ -41,9 +41,9 @@ export default function Auth() {
       password: password,
     });
 
-    if (error) Alert.alert(error.message);
+    if (error) Alert.alert("Error", error.message);
     if (!session)
-      Alert.alert("Please check your inbox for email verification!");
+      Alert.alert("Success", "Please check your inbox for email verification!");
     setLoading(false);
   }
 

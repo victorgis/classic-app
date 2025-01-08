@@ -62,11 +62,11 @@ export default function ChannelScreen() {
   const addMember = async () => {
     const res = await channel.addMembers([user.id]);
 
-    console.log("res", res)
+    console.log("res", res);
 
     if (res) {
       setShowInput(true);
-      Alert.alert("Joined Successfully");
+      Alert.alert("Success", "Joined Successfully");
     }
   };
 

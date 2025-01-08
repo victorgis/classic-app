@@ -20,7 +20,7 @@ export default function CreateInterestScreen() {
   const [loading, setLoading] = useState(false);
   const [interestId, setInterestId] = useState("");
   const [interestName, setInterestName] = useState("");
-//   const [website, setWebsite] = useState("");
+  //   const [website, setWebsite] = useState("");
   const [interestAvatarUrl, setInterestAvatarUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const fullNameInputRef = useRef(null);
@@ -50,7 +50,7 @@ export default function CreateInterestScreen() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
@@ -83,11 +83,11 @@ export default function CreateInterestScreen() {
       if (error) {
         throw error;
       } else {
-        Alert.alert("Interest updated successfully!");
+        Alert.alert("Success", "Interest updated successfully!");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
@@ -168,7 +168,6 @@ export default function CreateInterestScreen() {
         />
       </View>
 
-      
       {/* <View style={styles.option}>
         <Ionicons name="notifications-outline" size={24} color="#555" />
         <Text style={styles.optionText}>Notification</Text>

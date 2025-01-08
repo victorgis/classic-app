@@ -54,12 +54,12 @@ export default function CreateInterestScreen() {
       await newChannel.watch();
 
       if (newChannel) {
-        Alert.alert("Success", "Interest Created Successfully")
+        Alert.alert("Success", "Interest Created Successfully");
         router.push(`/(home)/homepage`);
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function CreateInterestScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <View style={styles.avatar}>
         <Avatar
           size={200}

@@ -19,8 +19,9 @@ const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
         barStyle="dark-content" // Use "light-content" if you want the status bar text to be light
       />
       <SafeAreaView
+        edges={["top", "left", "right"]}
         style={[
-          // { flex: 1 },
+          { flex: 1 },
           // Platform.OS === "android"
           //   ? { paddingTop: StatusBar.currentHeight }
           //   : {},

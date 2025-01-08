@@ -40,7 +40,7 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);

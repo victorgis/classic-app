@@ -6,6 +6,7 @@ import AuthProvider from "../providers/AuthProvider";
 import { useEffect } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { AvatarProvider } from "../providers/AvatarContext";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -25,28 +26,22 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        <Stack>
-          <Stack.Screen
-            name="(home)"
-            options={{ headerShown: false, title: "HomeScreen" }}
-          />
-          <Stack.Screen
-            name="index"
-            options={{ headerShown: false, title: "Main" }}
-          />
-          <Stack.Screen
-            name="(auth)"
-            options={{ headerShown: false, title: "Main" }}
-          />
-          <Stack.Screen
-            name="profile"
-            options={{ headerShown: false, title: "Profile" }}
-          />
-          {/* <Stack.Screen
-            name="createInterest"
-            options={{ headerShown: true, title: "Create Interest" }}
-          /> */}
-        </Stack>
+        <AvatarProvider>
+          <Stack>
+            <Stack.Screen
+              name="(home)"
+              options={{ headerShown: false, title: "HomeScreen" }}
+            />
+            <Stack.Screen
+              name="index"
+              options={{ headerShown: false, title: "Main" }}
+            />
+            <Stack.Screen
+              name="(auth)"
+              options={{ headerShown: false, title: "Main" }}
+            />
+          </Stack>
+        </AvatarProvider>
         {/* <Slot /> */}
       </AuthProvider>
     </GestureHandlerRootView>

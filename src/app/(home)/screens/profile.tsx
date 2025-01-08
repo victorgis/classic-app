@@ -13,9 +13,13 @@ import { useAuth } from "@/src/providers/AuthProvider";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Avatar from "@/src/component/Avatar";
 import { RFValue } from "react-native-responsive-fontsize";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAvatar } from "@/src/providers/AvatarContext";
+
 
 export default function ProfileScreen() {
   const { session } = useAuth();
+  const { setAvatarUrl2 } = useAvatar(); 
 
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
@@ -27,7 +31,21 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     if (session) getProfile();
+    // loadAvatarFromStorage(); // Load avatar URL from AsyncStorage
   }, [session]);
+
+  // Function to load avatar URL from AsyncStorage
+  // const loadAvatarFromStorage = async () => {
+  //   try {
+  //     const storedAvatarUrl = await AsyncStorage.getItem("avatarUrl");
+  //     if (storedAvatarUrl) {
+  //       // console.log("errorGuy", storedAvatarUrl);
+  //       setAvatarUrl(storedAvatarUrl); // Set the avatar URL if it exists in AsyncStorage
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to load avatar from storage", error);
+  //   }
+  // };
 
   async function getProfile() {
     try {
@@ -46,12 +64,13 @@ export default function ProfileScreen() {
       if (data) {
         setUsername(data.username);
         setWebsite(data.website);
+        // console.log("setImgae", data.avatar_url);
         setAvatarUrl(data.avatar_url);
         setFullName(data.full_name);
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
@@ -87,17 +106,28 @@ export default function ProfileScreen() {
       if (error) {
         throw error;
       } else {
-        Alert.alert("Profile updated successfully!");
+        Alert.alert("Success", "Profile updated successfully!");
       }
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert(error.message);
+        Alert.alert("Error", error.message);
       }
     } finally {
       setLoading(false);
       setIsEditing(false);
     }
   }
+
+  // Save avatar URL to AsyncStorage whenever it's updated
+  const saveAvatarToStorage = async (url: string) => {
+    try {
+      const link = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${url}`
+      setAvatarUrl2(link);
+      await AsyncStorage.setItem("avatarUrl", link); // Store avatar URL in AsyncStorage
+    } catch (error) {
+      console.error("Failed to save avatar to storage", error);
+    }
+  };
 
   const handleIconPress = () => {
     if (isEditing) {
@@ -122,7 +152,10 @@ export default function ProfileScreen() {
           size={200}
           url={avatarUrl}
           onUpload={(url: string) => {
+            console.log("uploadImage", url)
             setAvatarUrl(url);
+            saveAvatarToStorage(url); // Save the avatar URL to AsyncStorage
+            
             updateProfile({
               username,
               website,
@@ -190,9 +223,9 @@ export default function ProfileScreen() {
         <MaterialIcons name="block" size={24} color="#555" />
         <Text style={styles.optionText}>Block List</Text>
       </View>
-      <View style={styles.verticallySpaced}>
+      {/* <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
+      </View> */}
     </View>
   );
 }

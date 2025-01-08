@@ -1,4 +1,4 @@
-import { Redirect, Stack } from "expo-router";
+import { Redirect, Slot, Stack } from "expo-router";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import ChatProvider from "../../providers/ChatProvider";
 import { useAuth } from "@/src/providers/AuthProvider";
@@ -14,7 +14,7 @@ const HomeLayout: React.FC = () => {
   }
 
   return (
-    <SafeAreaWrapper style={[styles.safeArea]}>
+    <SafeAreaWrapper>
       <ChatProvider>
         <Stack>
           <Stack.Screen
@@ -30,6 +30,23 @@ const HomeLayout: React.FC = () => {
             }}
           />
           <Stack.Screen
+            name="screens/profile"
+            options={{ headerShown: true, title: "Profile" }}
+          />
+          <Stack.Screen
+            name="screens/notifications"
+            options={{ headerShown: true, title: "Notification" }}
+          />
+          <Stack.Screen
+            name="screens/privacypolicy"
+            options={{ headerShown: true, title: "Privacy Policy" }}
+          />
+          <Stack.Screen
+            name="screens/termscondition"
+            options={{ headerShown: true, title: "Terms & Conditions" }}
+          />
+
+          <Stack.Screen
             name="screens/createInterest"
             options={{
               headerShown: true,
@@ -41,7 +58,6 @@ const HomeLayout: React.FC = () => {
                 fontSize: 20,
                 fontWeight: "bold",
                 // padding: 34
-                
               },
               headerTitle: "Create Interest", // Custom title
               // headerRight: () => (
@@ -55,6 +71,7 @@ const HomeLayout: React.FC = () => {
             }}
           />
         </Stack>
+        {/* <Slot /> */}
       </ChatProvider>
     </SafeAreaWrapper>
   );

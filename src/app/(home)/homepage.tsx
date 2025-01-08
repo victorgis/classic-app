@@ -7,26 +7,45 @@ import {
   TextInput,
   TouchableOpacity,
   ViewBase,
+  TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Link, Redirect, router } from "expo-router";
-import MainTabScreen from "./(tabs)";
-import { ChannelList } from "stream-chat-expo";
 import AllChannelsScreen from "./(tabs)";
 import MyInterestChannelsScreen from "./(tabs)/myInterest";
 import { useAuth } from "@/src/providers/AuthProvider";
+import { supabase } from "@/src/lib/supabase";
+import { useAvatar } from "@/src/providers/AvatarContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LinearGradient from "react-native-linear-gradient";
 
 const MainScreen = () => {
+  const { avatarUrl } = useAvatar();
   const [activeTab, setActiveTab] = useState("Tab1");
   const [showSearch, setShowSearch] = useState(false);
   const { profile } = useAuth();
   const [showOptions, setShowOptions] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [activeButton, setActiveButton] = useState("");
+  const [asyncUrl, setAsyncUrl] = useState("");
 
   const staticImg = require("../../../assets/images/avatar.png");
-  const profileUrl = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
-  const finalUrl = profileUrl ? { uri: profileUrl } : staticImg;
+  const finalUrl = avatarUrl ? { uri: avatarUrl } : { uri: asyncUrl };
+
+  const loadAvatarFromStorage = async () => {
+    try {
+      const storedAvatarUrl = await AsyncStorage.getItem("avatarUrl");
+      if (storedAvatarUrl) {
+        // console.log("errorGuy", storedAvatarUrl);
+        setAsyncUrl(storedAvatarUrl); // Set the avatar URL if it exists in AsyncStorage
+      }
+    } catch (error) {
+      console.error("Failed to load avatar from storage", error);
+    }
+  };
+  loadAvatarFromStorage();
 
   const showSearchFx = () => {
     if (showSearch == false) setShowSearch(true);
@@ -34,20 +53,35 @@ const MainScreen = () => {
   };
 
   const notificationsFx = () => {
-    if (showNotifications == false) setShowNotifications(true);
-    else setShowNotifications(false);
+    router.push("/screens/notifications");
   };
 
   const optionsFx = () => {
     console.log("options pressed");
     if (showOptions == false) setShowOptions(true);
     else setShowOptions(false);
+    setActiveButton(null);
   };
 
   const privacyFX = () => {
-    // <Redirect href="/screens/profile" />;
-    router.push("/screens/profile"); // Redirects to the profile screen
+    setActiveButton("privacy");
+    router.push("/screens/privacypolicy");
     setShowOptions(false);
+  };
+
+  const termsConditionFX = () => {
+    setActiveButton("terms");
+    router.push("/screens/termscondition");
+    setShowOptions(false);
+  };
+
+  const logoutFX = () => {
+    setActiveButton("logout");
+    supabase.auth.signOut();
+  };
+
+  const createInterestFx = () => {
+    router.push("/(home)/screens/createInterest");
   };
 
   const renderContent = () => {
@@ -67,6 +101,17 @@ const MainScreen = () => {
   };
   return (
     <View style={styles.container}>
+      {(showOptions || showSearch || showNotifications) && (
+        <Pressable
+          style={styles.overlay}
+          onPress={() => {
+            setShowOptions(false);
+            setShowSearch(false);
+            setShowNotifications(false);
+          }}
+        />
+      )}
+
       {/* Top menu section */}
       <View style={styles.topMenuContainer}>
         <View style={styles.topMenuLeft}>
@@ -77,11 +122,11 @@ const MainScreen = () => {
             <Image
               source={finalUrl}
               style={{
-                width: 45,
-                height: 45,
+                width: RFValue(40),
+                height: RFValue(40),
                 borderRadius: RFPercentage(50),
-                borderWidth: 0.5,
-                borderColor: "#6E00FF",
+                // borderWidth: 1,
+                // borderColor: "#6E00FF",
               }}
             />
           </Link>
@@ -103,20 +148,44 @@ const MainScreen = () => {
               <Ionicons name="ellipsis-vertical" size={RFValue(17)} />
             </View>
           </TouchableOpacity>
+
           {showOptions && (
             <View style={styles.options}>
-              <TouchableOpacity onPress={privacyFX}>
-                {" "}
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === "privacy" && styles.activeButton,
+                ]}
+                onPress={privacyFX}
+                onPressIn={() => setActiveButton("privacy")} // Change background color on press
+                onPressOut={() => setActiveButton(null)} // Reset when press is released
+              >
                 <Text style={{ paddingVertical: RFValue(8) }}>
                   Privacy Policy
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === "terms" && styles.activeButton,
+                ]}
+                onPress={termsConditionFX}
+                onPressIn={() => setActiveButton("terms")}
+                onPressOut={() => setActiveButton(null)}
+              >
                 <Text style={{ paddingVertical: RFValue(8) }}>
                   Terms & Conditions
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  activeButton === "logout" && styles.activeButton,
+                ]}
+                onPress={logoutFX}
+                onPressIn={() => setActiveButton("logout")}
+                onPressOut={() => setActiveButton(null)}
+              >
                 <Text style={{ paddingVertical: RFValue(8) }}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -125,16 +194,14 @@ const MainScreen = () => {
       </View>
 
       {/* Add button section  */}
-      <Link style={styles.addButton} href={"/(home)/screens/createInterest"}>
-        <View>
-          <MaterialIcons
-            name="add-circle"
-            color={"#6E00FF"}
-            style={{ backgroundColor: "#fff" }}
-            size={RFValue(50)}
-          />
-        </View>
-      </Link>
+      <TouchableOpacity style={styles.addButton} onPress={createInterestFx}>
+        <MaterialIcons
+          name="add-circle"
+          color={"#6E00FF"}
+          style={{ backgroundColor: "#fff" }}
+          size={RFValue(50)}
+        />
+      </TouchableOpacity>
 
       {/* Hidden search box section */}
       {showSearch && (
@@ -210,7 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: RFValue(5),
-    height: RFValue(45),
+    height: RFValue(50),
     borderRadius: RFValue(15),
     marginHorizontal: RFValue(10),
     marginTop: RFValue(10),
@@ -280,7 +347,7 @@ const styles = StyleSheet.create({
     right: RFValue(20),
     bottom: RFValue(70),
     width: RFValue(60),
-    zIndex: 1,
+    zIndex: 100,
   },
   options: {
     position: "absolute",
@@ -289,7 +356,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     zIndex: 2,
     borderColor: "#262626",
-    padding: RFValue(15),
+    // padding: RFValue(15),
+    paddingVertical: RFValue(8),
 
     // Shadow for Android
     elevation: 5, // Adjust as needed
@@ -303,5 +371,25 @@ const styles = StyleSheet.create({
     // Add a border for better visibility (optional)
     // borderWidth: 1,
     borderRadius: 8, // Rounded corners (optional)
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0)", // Transparent
+    zIndex: 1, // Ensures it's above main content
+  },
+  button: {
+    backgroundColor: "#fff",
+    paddingHorizontal: RFValue(20),
+  },
+  activeButton: {
+    backgroundColor: "rgb(228,207,255)",
+    // backgroundColor: -moz-radial-gradient(circle, rgba(228,207,255,1) 0%, rgba(249,245,254,1) 100%),
+    // backgroundColor: -webkit-radial-gradient(circle, rgba(228,207,255,1) 0%, rgba(249,245,254,1) 100%),
+    // backgroundColor: radial-gradient(circle, rgba(228,207,255,1) 0%, rgba(249,245,254,1) 100%),
+    // filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#e4cfff",endColorstr="#f9f5fe",GradientType=1),
   },
 });
