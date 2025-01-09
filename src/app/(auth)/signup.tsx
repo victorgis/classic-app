@@ -16,6 +16,7 @@ import { Button, Input } from "@rneui/themed";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { CheckBox } from "react-native-elements";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -29,7 +30,7 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Auth() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,17 +39,6 @@ export default function Auth() {
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
-
-  // async function signInWithEmail() {
-  //   setLoading(true);
-  //   const { error } = await supabase.auth.signInWithPassword({
-  //     email: email,
-  //     password: password,
-  //   });
-
-  //   if (error) Alert.alert("Error", error.message);
-  //   setLoading(false);
-  // }
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -112,106 +102,109 @@ export default function Auth() {
             justifyContent: "center",
           }}
         > */}
-          <View style={[styles.formPart]}>
-            <View style={[styles.verticallySpaced]}>
-              <Text
-                style={{
-                  fontSize: RFValue(24),
-                  fontWeight: "700",
-                  color: "#303030",
-                }}
-              >
-                Create Account
-              </Text>
-              <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-                Please enter your details
-              </Text>
+        <View style={[styles.formPart]}>
+          <View style={[styles.verticallySpaced]}>
+            <Text
+              style={{
+                fontSize: RFValue(24),
+                fontWeight: "700",
+                color: "#303030",
+              }}
+            >
+              Create Account
+            </Text>
+            <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
+              Please enter your details
+            </Text>
 
-              <View style={[{ marginTop: RFValue(10) }]}>
-                <Input
-                  // label="Email"
-                  // leftIcon={{ type: "font-awesome", name: "envelope" }}
-                  onChangeText={(text) => setEmail(text)}
-                  value={email}
-                  placeholder="email@address.com"
-                  autoCapitalize={"none"}
-                />
-              </View>
-            </View>
-            <View>
+            <View style={[{ marginTop: RFValue(10) }]}>
               <Input
-                // label="Password"
-                // leftIcon={{ type: "font-awesome", name: "lock" }}
-                onChangeText={(text) => setPassword(text)}
-                value={password}
-                secureTextEntry={true}
-                placeholder="Password"
+                // label="Email"
+                // leftIcon={{ type: "font-awesome", name: "envelope" }}
+                onChangeText={(text) => setEmail(text)}
+                value={email}
+                placeholder="email@address.com"
                 autoCapitalize={"none"}
               />
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingRight: RFValue(16),
-              }}
-            >
-              <CheckBox
-                checked={isChecked}
-                onPress={() => setIsChecked(!isChecked)} // Manage state for the checkbox
-                containerStyle={{ margin: 0, padding: 0 }}
-              />
-              <Text style={{ color: "#555", fontSize: RFValue(12) }}>
-                By signing up, you agree to our
-                <Text style={{ textDecorationLine: "underline" }}>
-                  {" "}
-                  Terms & Conditions
-                </Text>
+          </View>
+          <View>
+            <Input
+              // label="Password"
+              // leftIcon={{ type: "font-awesome", name: "lock" }}
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+              secureTextEntry={true}
+              placeholder="Password"
+              autoCapitalize={"none"}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingRight: RFValue(16),
+            }}
+          >
+            <CheckBox
+              checked={isChecked}
+              onPress={() => setIsChecked(!isChecked)} // Manage state for the checkbox
+              containerStyle={{ margin: 0, padding: 0 }}
+            />
+            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
+              By signing up, you agree to our
+              <Text style={{ textDecorationLine: "underline" }}>
+                {" "}
+                Terms & Conditions
               </Text>
-            </View>
+            </Text>
+          </View>
 
-            <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
-              <TouchableOpacity
-                disabled={!isChecked || loading}
-                onPress={signUpWithEmail}
-                style={[
-                  styles.button,
-                  { backgroundColor: !isChecked ? "#ccc" : "#6E00FF" },
-                ]}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    textAlign: "center",
-                    fontWeight: "700",
-                  }}
-                >
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                alignSelf: "center",
-                justifyContent: "center",
-                marginTop: RFValue(15),
-                // paddingTop: RFValue(15),
-                borderTopWidth: 1,
-                borderTopColor: "#E7E7E7",
-                width: "100%",
-              }}
+          <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
+            <TouchableOpacity
+              disabled={!isChecked || loading}
+              onPress={signUpWithEmail}
+              style={[
+                styles.button,
+                { backgroundColor: !isChecked ? "#ccc" : "#6E00FF" },
+              ]}
             >
               <Text
                 style={{
-                  paddingTop: RFValue(10),
-                  alignSelf: "center",
+                  color: "#fff",
+                  textAlign: "center",
+                  fontWeight: "700",
                 }}
               >
-                Already have an account?{" "}
-                <Text style={{ textDecorationLine: "underline" }}>Login</Text>
+                Sign Up
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
+          <View
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              marginTop: RFValue(15),
+              // paddingTop: RFValue(15),
+              borderTopWidth: 1,
+              borderTopColor: "#E7E7E7",
+              width: "100%",
+            }}
+          >
+            <Text
+              onPress={() => router.push("/(auth)/login")}
+              style={{
+                paddingTop: RFValue(10),
+                alignSelf: "center",
+              }}
+            >
+              Already have an account?{" "}
+              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                <Text style={{ textDecorationLine: "underline" }}>Login</Text>
+              </TouchableOpacity>
+            </Text>
+          </View>
+        </View>
         {/* </ScrollView> */}
       </View>
       <View
@@ -219,7 +212,7 @@ export default function Auth() {
           flexDirection: "row",
           alignItems: "center",
           marginBottom: RFValue(40),
-          alignSelf: "center"
+          alignSelf: "center",
         }}
       >
         <View>
@@ -256,6 +249,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: RFValue(10),
+    marginHorizontal: RFValue(5),
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -271,6 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: RFValue(20),
     borderRadius: RFValue(25),
+    width: "100%",
   },
   button: {
     backgroundColor: "#6E00FF",
