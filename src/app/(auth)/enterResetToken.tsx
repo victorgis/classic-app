@@ -14,33 +14,73 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { RFValue } from "react-native-responsive-fontsize";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { CodeField, Cursor } from "react-native-confirmation-code-field";
+import { supabase } from "@/src/lib/supabase";
+import { useEffect } from "react";
 
 
 
 export default function EnterResetToken() {
-  const [token, setToken] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [token, setToken] = useState("");
+  // const [loading, setLoading] = useState(false);
+  // const [acess_token, setAccess_token] = useState()
+  // const [refresh_token, setRefresh_token] = useState()
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
-  const { email } = useLocalSearchParams();
+  // const { email } = useLocalSearchParams();
 
-  const handleNavigateToResetPassword = () => {
-    if (!email) {
-      Alert.alert("Error", "Email is missing.");
-      return;
-    }
 
-    if (token?.length === 6) {
-      router.push({ pathname: "/(auth)/resetPassword", params: { token, email } });
-    } else {
-      Alert.alert("Invalid Token", "Please enter the full 6-digit token.");
-    }
-  };
+  // // useEffect(() => {
+  //     const verifyOtp = async () => {
+  //       if (email && token) {
+  //         const {
+  //           data: { session },
+  //           error,
+  //         } = await supabase.auth.verifyOtp({
+  //           email: email,
+  //           token: 12345,
+  //           type: "recovery",
+  //         });
+    
+  //         if (error) {
+  //           console.error("OTP verification failed:", error);
+  //           Alert.alert("Error", "Failed to verify OTP.");
+  //         } else {
+  //           // setUsersession(session);
+  //           if (session) {
+  //             console.log("session", session)
+  //             setAccess_token(session.access_token);
+  //             setRefresh_token(session.refresh_token);
+  //           }
+  //         }
+  //       }
+  //     };
+    
+      
+  //   // }, [email, token]);
+
+  
+
+  // const handleNavigateToResetPassword = () => {
+
+  //   if (token?.length === 6) {
+  //     verifyOtp();
+
+
+
+
+ 
+  //     acess_token ? router.push({ pathname: "/(auth)/resetPassword", params: { acess_token, refresh_token } }) : null
+  //   } else {
+  //     Alert.alert("Invalid Token", "Please enter the full 6-digit token.");
+  //   }
+  // };
+
+
 
 
 
@@ -75,7 +115,9 @@ export default function EnterResetToken() {
           </Text>
         </View>
         <View style={[styles.formPart]}>
-          <View style={[styles.verticallySpaced]}>
+          <Text style={{fontSize: RFValue(14)}}>Kindly check your email for a reset link. Also check your spam folders if you haven't found it</Text>
+          <TouchableOpacity onPress={()=>router.back()} ><Text style={{fontSize: RFValue(14), fontWeight: "600", paddingTop: RFValue(20)}}> <MaterialIcons name="arrow-back" size={14} /> Go back</Text></TouchableOpacity>
+          {/* <View style={[styles.verticallySpaced]}>
             <Text
               style={{
                 fontSize: RFValue(24),
@@ -88,10 +130,10 @@ export default function EnterResetToken() {
             <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
               Please enter the 6-digit token sent to your email.
             </Text>
-          </View>
+          </View> */}
 
           {/* Confirmation Code Field */}
-          <CodeField
+          {/* <CodeField
             value={token}
             onChangeText={setToken}
             cellCount={6}
@@ -111,10 +153,10 @@ export default function EnterResetToken() {
                 </Text>
               </View>
             )}
-          />
+          /> */}
 
 
-          <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
+          {/* <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
               onPress={handleNavigateToResetPassword}
               style={[styles.button, { backgroundColor: "#6E00FF" }]}
@@ -130,8 +172,8 @@ export default function EnterResetToken() {
                 {!loading ? "Submit" : <ActivityIndicator />}
               </Text>
             </TouchableOpacity>
-          </View>
-          <View
+          </View> */}
+          {/* <View
             style={{
               alignItems: "center",
               justifyContent: "center",
@@ -161,7 +203,7 @@ export default function EnterResetToken() {
                 </Text>
               </TouchableOpacity>
             </Text>
-          </View>
+          </View> */}
         </View>
       </View>
       <View
@@ -216,7 +258,7 @@ const styles = StyleSheet.create({
   formPart: {
     marginTop: RFValue(20),
     backgroundColor: "#fff",
-    padding: RFValue(20),
+    padding: RFValue(30),
     borderRadius: RFValue(25),
     width: "100%",
   },

@@ -26,10 +26,9 @@ import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 
-
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
+// onAuthStateChange events with the TOKEN_REFRESHED or SIGNED_OUT event
 // if the user's session is terminated. This should only be registered once.
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -40,52 +39,39 @@ AppState.addEventListener("change", (state) => {
 });
 
 type Params = {
-  token: string;
-  email: string
+  access_token: string;
+  refresh_token: string
 };
 
 export default function ResetPassword() {
-  // const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [access_token, setAccess_token] = useState("");
-  const [refresh_token, setRefresh_token] = useState("");
-  const { token, email } = useLocalSearchParams<Params>();
-  const [usersession, setUsersession] = useState<any>()
+  const { access_token, refresh_token } = useLocalSearchParams<Params>();
+  const [sessionInitialized, setSessionInitialized] = useState(false)
 
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
 
-  useEffect(()=>{
-
-    console.log("token", token)
-
-    const verifyOtp = async () => {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.verifyOtp({
-        email: email,
-        token: token,
-        type: 'email',
-      })
-      // setSession(session)
-      setUsersession(session)
-      console.log("session", session)
-      setAccess_token(usersession.access_token)
-      setRefresh_token(usersession.refresh_token)
-    }
-
-    verifyOtp()
-    
-
-  }, [])
-
+  // useEffect(() => {
+  //   const handleAppStateChange = (state) => {
+  //     if (state === "active") {
+  //       supabase.auth.startAutoRefresh();
+  //     } else {
+  //       supabase.auth.stopAutoRefresh();
+  //     }
+  //   };
   
-
+  //   AppState.addEventListener("change", handleAppStateChange);
+  
+  //   return () => {
+  //     // AppState.removeEventListener("change", handleAppStateChange);
+  //     console.log("error that I don't know")
+  //   };
+  // }, []);
+  
   // Initialize session using access_token
   useEffect(() => {
     const setSession = async () => {
@@ -98,7 +84,7 @@ export default function ResetPassword() {
         if (error) {
           Alert.alert("Error", "Failed to initialize session.");
         } else {
-          // setSessionInitialized(true);
+          setSessionInitialized(true);
         }
       } else {
         Alert.alert("Error", "Access token is missing.");
@@ -121,7 +107,7 @@ export default function ResetPassword() {
       return;
     }
 
-    setLoading(true);
+      setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
 
@@ -134,7 +120,17 @@ export default function ResetPassword() {
       );
       router.replace("/(auth)/login");
     }
+    
   };
+
+  // Show a loading message until the session is initialized
+  if (!sessionInitialized) {
+    return (
+      <View style={styles.container}>
+        <Text>Initializing...</Text>
+      </View>
+    );
+  }
 
   
 
@@ -144,13 +140,7 @@ export default function ResetPassword() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      {/* <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: RFValue(20),
-          paddingBottom: RFValue(20),
-          flexGrow: 1, // Makes content take up remaining space
-        }}
-      > */}
+
       <View style={styles.container}>
         <View
           style={{
@@ -175,15 +165,6 @@ export default function ResetPassword() {
             Classic App
           </Text>
         </View>
-        {/* <ScrollView
-          style={{ maxHeight: RFValue(450) }}
-          contentContainerStyle={{
-            // paddingHorizontal: RFValue(20),
-            // paddingBottom: RFValue(20),
-            flexGrow: 1, // Makes content take up remaining space
-            justifyContent: "center",
-          }}
-        > */}
         <View style={[styles.formPart]}>
           <View style={[styles.verticallySpaced]}>
             <Text
@@ -200,28 +181,28 @@ export default function ResetPassword() {
             </Text>
 
             <TextInput
-          style={styles.input}
-          placeholder="New Password"
-          secureTextEntry
-          onChangeText={setPassword}
-        />
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry
+              onChangeText={setPassword}
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          secureTextEntry
-          onChangeText={setConfirmPassword}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry
+              onChangeText={setConfirmPassword}
+            />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleResetPassword}
-          disabled={loading}
-        >
-          <Text style={styles.buttonText}>
-            {loading ? "Updating..." : "Reset Password"}
-          </Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleResetPassword}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? "Updating..." : "Reset Password"}
+              </Text>
+            </TouchableOpacity>
           </View>
           
           <View
@@ -242,10 +223,8 @@ export default function ResetPassword() {
             </Text>
           </View>
 
-          <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
+          {/* <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
-            //   disabled={!isChecked || loading}
-              // onPress={signInWithEmail}
               style={[
                 styles.button,
                 { backgroundColor: "#6E00FF" },
@@ -261,7 +240,7 @@ export default function ResetPassword() {
                 Confirm Reset
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View
             style={{
               alignItems: "center",
@@ -274,7 +253,6 @@ export default function ResetPassword() {
             }}
           >
             <Text
-              onPress={() => router.push("/(auth)/signup")}
               style={{
                 paddingTop: RFValue(10),
                 alignSelf: "center",

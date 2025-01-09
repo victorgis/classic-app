@@ -48,12 +48,13 @@ export default function ForgottenPassword() {
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "classic-app://enterResetToken", // Update this URL to match your deep link
+      redirectTo: "classic-app://resetPassword", // Update this URL to match your deep link
       
     });
     
 
     setLoading(false);
+    // console.log("email", email)
 
     if (error) {
       Alert.alert("Error", error.message);
@@ -61,9 +62,8 @@ export default function ForgottenPassword() {
       // router.push("/(auth)/enterResetToken")
       router.push({
         pathname: "/(auth)/enterResetToken", // Adjust to your actual reset password screen route
-        params: { email },
       });
-      Alert.alert("Success", "Password reset link sent to your email.");
+      Alert.alert("Success", "Password reset token has been sent to your email.");
      
     }
   }
