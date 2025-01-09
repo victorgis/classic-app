@@ -5,56 +5,45 @@ import {
   View,
   AppState,
   ImageBackground,
-  Dimensions,
-  ScrollView,
   Text,
   Image,
+  TextInput,
   TouchableOpacity,
+  ActivityIndicator,
+  
 } from "react-native";
-import { supabase } from "../../lib/supabase";
-import { Button, Input } from "@rneui/themed";
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import { CheckBox } from "react-native-elements";
-import {
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import { RFValue } from "react-native-responsive-fontsize";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { CodeField, Cursor } from "react-native-confirmation-code-field";
 
-// Tells Supabase Auth to continuously refresh the session automatically if
-// the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
-// if the user's session is terminated. This should only be registered once.
-AppState.addEventListener("change", (state) => {
-  if (state === "active") {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+export default function EnterResetToken() {
+  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
+  const { email } = useLocalSearchParams();
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+  const handleNavigateToResetPassword = () => {
+    if (!email) {
+      Alert.alert("Error", "Email is missing.");
+      return;
+    }
 
-    if (error) Alert.alert("Error", error.message);
-    setLoading(false);
-  }
+    if (token?.length === 6) {
+      router.push({ pathname: "/(auth)/resetPassword", params: { token, email } });
+    } else {
+      Alert.alert("Invalid Token", "Please enter the full 6-digit token.");
+    }
+  };
+
+
+
 
   return (
     <ImageBackground
@@ -62,20 +51,12 @@ export default function Login() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      {/* <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: RFValue(20),
-          paddingBottom: RFValue(20),
-          flexGrow: 1, // Makes content take up remaining space
-        }}
-      > */}
       <View style={styles.container}>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-            // marginTop: 100,
             top: RFValue(60),
             left: RFValue(20),
             position: "absolute",
@@ -93,15 +74,6 @@ export default function Login() {
             Classic App
           </Text>
         </View>
-        {/* <ScrollView
-          style={{ maxHeight: RFValue(450) }}
-          contentContainerStyle={{
-            // paddingHorizontal: RFValue(20),
-            // paddingBottom: RFValue(20),
-            flexGrow: 1, // Makes content take up remaining space
-            justifyContent: "center",
-          }}
-        > */}
         <View style={[styles.formPart]}>
           <View style={[styles.verticallySpaced]}>
             <Text
@@ -111,72 +83,51 @@ export default function Login() {
                 color: "#303030",
               }}
             >
-              Let’s get you in
+              Enter Reset Token
             </Text>
             <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your email and password
+              Please enter the 6-digit token sent to your email.
             </Text>
+          </View>
 
-            <View style={[{ marginTop: RFValue(10) }]}>
-              <Input
-                // label="Email"
-                // leftIcon={{ type: "font-awesome", name: "envelope" }}
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="email@address.com"
-                autoCapitalize={"none"}
-              />
-            </View>
-          </View>
-          <View>
-            <Input
-              // label="Password"
-              // leftIcon={{ type: "font-awesome", name: "lock" }}
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-              secureTextEntry={true}
-              placeholder="Password"
-              autoCapitalize={"none"}
-            />
-          </View>
-          <TouchableOpacity onPress={()=>router.push("/(auth)/forgottenPassword")}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingRight: RFValue(16),
-            }}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="black"
-            />
-            {"  "}
-            <Text style={[{ color: "#555", fontSize: RFValue(12) }, { textDecorationLine: "underline" }]}>
-            {"  "}Forgot Password
-            </Text>
-          </View>
-          </TouchableOpacity>
-          
+          {/* Confirmation Code Field */}
+          <CodeField
+            value={token}
+            onChangeText={setToken}
+            cellCount={6}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({ index, symbol, isFocused }) => (
+              <View
+                key={index}
+                style={[
+                  styles.cell,
+                  isFocused && styles.focusedCell,
+                ]}
+              >
+                <Text style={styles.cellText}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
+                </Text>
+              </View>
+            )}
+          />
+
 
           <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
-            //   disabled={!isChecked || loading}
-              onPress={signInWithEmail}
-              style={[
-                styles.button,
-                { backgroundColor: "#6E00FF" },
-              ]}
+              onPress={handleNavigateToResetPassword}
+              style={[styles.button, { backgroundColor: "#6E00FF" }]}
             >
               <Text
                 style={{
                   color: "#fff",
                   textAlign: "center",
+                  alignSelf: "center",
                   fontWeight: "700",
                 }}
               >
-                Sign In
+                {!loading ? "Submit" : <ActivityIndicator />}
               </Text>
             </TouchableOpacity>
           </View>
@@ -198,7 +149,12 @@ export default function Login() {
                 alignSelf: "center",
               }}
             >
-              Don’t have an account yet?{" "}
+              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                <Text style={{ textDecorationLine: "underline" }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+              {"     |    "}
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
                 <Text style={{ textDecorationLine: "underline" }}>
                   Create Account
@@ -207,7 +163,6 @@ export default function Login() {
             </Text>
           </View>
         </View>
-        {/* </ScrollView> */}
       </View>
       <View
         style={{
@@ -231,8 +186,8 @@ export default function Login() {
             Explore Your Interests
           </Text>
           <Text>
-            <Ionicons name="hand-right-outline" size={14} color="black" />
-            Hey there, login to discover interests
+            <Ionicons name="hand-right-outline" size={14} color="black" /> Hey
+            there, login to discover interests
           </Text>
         </View>
       </View>
@@ -254,27 +209,70 @@ const styles = StyleSheet.create({
     marginHorizontal: RFValue(5),
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: 14,
+    paddingBottom: 14,
     alignSelf: "stretch",
   },
-  mt20: {
-    marginTop: 20,
-  },
-
   formPart: {
-    // flex:  1,
+    marginTop: RFValue(20),
     backgroundColor: "#fff",
     padding: RFValue(20),
     borderRadius: RFValue(25),
     width: "100%",
   },
   button: {
-    backgroundColor: "#6E00FF",
     color: "#fff",
     padding: RFValue(10),
     width: RFValue(150),
     borderRadius: RFValue(8),
     alignSelf: "center",
   },
+  tokenContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: RFValue(20),
+  },
+  tokenBox: {
+    width: RFValue(40),
+    height: RFValue(50),
+    borderWidth: 1,
+    borderColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: RFValue(5),
+  },
+  tokenText: {
+    fontSize: RFValue(20),
+    fontWeight: "600",
+    color: "#000",
+  },
+  hiddenInput: {
+    position: "absolute",
+    opacity: 0,
+    width: 0,
+    height: 0,
+  },
+  codeFieldRoot: {
+    marginTop: RFValue(20),
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  cell: {
+    width: RFValue(40),
+    height: RFValue(50),
+    borderWidth: 1,
+    borderColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: RFValue(5),
+  },
+  focusedCell: {
+    borderColor: "#6E00FF",
+  },
+  cellText: {
+    fontSize: RFValue(20),
+    fontWeight: "600",
+    color: "#000",
+  },
+
 });

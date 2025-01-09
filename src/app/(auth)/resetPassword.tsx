@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
+  TextInput,
   Text,
   Image,
   TouchableOpacity,
@@ -22,6 +23,9 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -35,26 +39,104 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Login() {
-  const [email, setEmail] = useState("");
+type Params = {
+  token: string;
+  email: string
+};
+
+export default function ResetPassword() {
+  // const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [access_token, setAccess_token] = useState("");
+  const [refresh_token, setRefresh_token] = useState("");
+  const { token, email } = useLocalSearchParams<Params>();
+  const [usersession, setUsersession] = useState<any>()
+
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+  useEffect(()=>{
 
-    if (error) Alert.alert("Error", error.message);
+    console.log("token", token)
+
+    const verifyOtp = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.verifyOtp({
+        email: email,
+        token: token,
+        type: 'email',
+      })
+      // setSession(session)
+      setUsersession(session)
+      console.log("session", session)
+      setAccess_token(usersession.access_token)
+      setRefresh_token(usersession.refresh_token)
+    }
+
+    verifyOtp()
+    
+
+  }, [])
+
+  
+
+  // Initialize session using access_token
+  useEffect(() => {
+    const setSession = async () => {
+      if (access_token && refresh_token) {
+        const { error } = await supabase.auth.setSession({
+          access_token: access_token,
+          refresh_token: refresh_token, // No refresh token needed for password reset
+        });
+
+        if (error) {
+          Alert.alert("Error", "Failed to initialize session.");
+        } else {
+          // setSessionInitialized(true);
+        }
+      } else {
+        Alert.alert("Error", "Access token is missing.");
+      }
+    };
+
+    setSession();
+  }, [access_token]);
+  
+
+
+  const handleResetPassword = async () => {
+    
+    if (!password || password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
-  }
+
+    if (error) {
+      Alert.alert("Error", error.message);
+    } else {
+      Alert.alert(
+        "Success",
+        "Password reset successful! Redirecting to login."
+      );
+      router.replace("/(auth)/login");
+    }
+  };
+
+  
 
   return (
     <ImageBackground
@@ -111,35 +193,37 @@ export default function Login() {
                 color: "#303030",
               }}
             >
-              Let’s get you in
+              Reset Password
             </Text>
             <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your email and password
+              Please enter your new password
             </Text>
 
-            <View style={[{ marginTop: RFValue(10) }]}>
-              <Input
-                // label="Email"
-                // leftIcon={{ type: "font-awesome", name: "envelope" }}
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="email@address.com"
-                autoCapitalize={"none"}
-              />
-            </View>
+            <TextInput
+          style={styles.input}
+          placeholder="New Password"
+          secureTextEntry
+          onChangeText={setPassword}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          secureTextEntry
+          onChangeText={setConfirmPassword}
+        />
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleResetPassword}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Updating..." : "Reset Password"}
+          </Text>
+        </TouchableOpacity>
           </View>
-          <View>
-            <Input
-              // label="Password"
-              // leftIcon={{ type: "font-awesome", name: "lock" }}
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-              secureTextEntry={true}
-              placeholder="Password"
-              autoCapitalize={"none"}
-            />
-          </View>
-          <TouchableOpacity onPress={()=>router.push("/(auth)/forgottenPassword")}>
+          
           <View
             style={{
               flexDirection: "row",
@@ -153,17 +237,15 @@ export default function Login() {
               color="black"
             />
             {"  "}
-            <Text style={[{ color: "#555", fontSize: RFValue(12) }, { textDecorationLine: "underline" }]}>
-            {"  "}Forgot Password
+            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
+              {"  "}Store your password securely
             </Text>
           </View>
-          </TouchableOpacity>
-          
 
           <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
             //   disabled={!isChecked || loading}
-              onPress={signInWithEmail}
+              // onPress={signInWithEmail}
               style={[
                 styles.button,
                 { backgroundColor: "#6E00FF" },
@@ -176,7 +258,7 @@ export default function Login() {
                   fontWeight: "700",
                 }}
               >
-                Sign In
+                Confirm Reset
               </Text>
             </TouchableOpacity>
           </View>
@@ -198,7 +280,12 @@ export default function Login() {
                 alignSelf: "center",
               }}
             >
-              Don’t have an account yet?{" "}
+              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                <Text style={{ textDecorationLine: "underline" }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+              {"     |    "}
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
                 <Text style={{ textDecorationLine: "underline" }}>
                   Create Account
@@ -276,5 +363,19 @@ const styles = StyleSheet.create({
     width: RFValue(150),
     borderRadius: RFValue(8),
     alignSelf: "center",
+  },
+  input: {
+    width: RFValue(260),
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 8,
+    fontSize: 16,
+    color: "#000",
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
   },
 });

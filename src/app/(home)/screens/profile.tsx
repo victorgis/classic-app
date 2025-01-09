@@ -15,6 +15,7 @@ import Avatar from "@/src/component/Avatar";
 import { RFValue } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAvatar } from "@/src/providers/AvatarContext";
+import { router } from "expo-router";
 
 
 export default function ProfileScreen() {
@@ -207,22 +208,34 @@ export default function ProfileScreen() {
           }}
         />
       </View>
-      <View style={styles.option}>
-        <Ionicons name="notifications-outline" size={24} color="#555" />
-        <Text style={styles.optionText}>Notification</Text>
-      </View>
-      <View style={styles.option}>
-        <Ionicons name="key" size={24} color="#555" />
-        <Text style={styles.optionText}>Change Password</Text>
-      </View>
-      <View style={styles.option}>
-        <Ionicons name="person-outline" size={24} color="#555" />
-        <Text style={styles.optionText}>Moderator in interest</Text>
-      </View>
-      <View style={styles.option}>
-        <MaterialIcons name="block" size={24} color="#555" />
-        <Text style={styles.optionText}>Block List</Text>
-      </View>
+      <TouchableOpacity onPress={()=>router.push("/(home)/screens/notifications")}>
+        <View style={styles.option}>
+          <Ionicons name="notifications-outline" size={24} color="#555" />
+          <Text style={styles.optionText}>Notification</Text>
+        </View>
+      </TouchableOpacity>
+      
+      <TouchableOpacity>
+        <View style={styles.option}>
+          <Ionicons name="key" size={24} color="#555" />
+          <Text style={styles.optionText}>Change Password</Text>
+        </View>
+      </TouchableOpacity>
+      
+      <TouchableOpacity>
+        <View style={styles.option}>
+          <Ionicons name="person-outline" size={24} color="#555" />
+          <Text style={styles.optionText}>Moderator in interest</Text>
+        </View>
+      </TouchableOpacity>
+      
+      <TouchableOpacity>
+        <View style={styles.option}>
+          <MaterialIcons name="block" size={24} color="#555" />
+          <Text style={styles.optionText}>Block List</Text>
+        </View>
+      </TouchableOpacity>
+      
       {/* <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View> */}

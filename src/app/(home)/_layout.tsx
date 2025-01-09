@@ -1,5 +1,5 @@
 import { Redirect, Slot, Stack } from "expo-router";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import ChatProvider from "../../providers/ChatProvider";
 import { useAuth } from "@/src/providers/AuthProvider";
 import SafeAreaWrapper from "@/src/hook/SafeAreaWrapper";
@@ -31,7 +31,7 @@ const HomeLayout: React.FC = () => {
           />
           <Stack.Screen
             name="screens/profile"
-            options={{ headerShown: true, title: "Profile" }}
+            options={{ headerShown: true, title: "Profile", headerBackTitle: "back" }}
           />
           <Stack.Screen
             name="screens/notifications"
@@ -43,7 +43,7 @@ const HomeLayout: React.FC = () => {
           />
           <Stack.Screen
             name="screens/termscondition"
-            options={{ headerShown: true, title: "Terms & Conditions" }}
+            options={{ headerShown: true, title: "Terms & Conditions", headerBackTitle: "back" }}
           />
 
           <Stack.Screen
@@ -53,10 +53,10 @@ const HomeLayout: React.FC = () => {
               headerStyle: {
                 backgroundColor: "#fff", // Customize background color
               },
-              headerTintColor: "#333", // Customize text/icon color
+              // headerTintColor: "#333", // Customize text/icon color
               headerTitleStyle: {
-                fontSize: 20,
-                fontWeight: "bold",
+                // fontSize: 20,
+                // fontWeight: "bold",
                 // padding: 34
               },
               headerTitle: "Create Interest", // Custom title

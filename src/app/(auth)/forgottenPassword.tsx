@@ -5,11 +5,10 @@ import {
   View,
   AppState,
   ImageBackground,
-  Dimensions,
-  ScrollView,
   Text,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Button, Input } from "@rneui/themed";
@@ -21,7 +20,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -35,7 +34,7 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Login() {
+export default function ForgottenPassword() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,15 +44,28 @@ export default function Login() {
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
 
-  async function signInWithEmail() {
+  async function forgottenPasswordWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
 
-    if (error) Alert.alert("Error", error.message);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "classic-app://enterResetToken", // Update this URL to match your deep link
+      
+    });
+    
+
     setLoading(false);
+
+    if (error) {
+      Alert.alert("Error", error.message);
+    } else {
+      // router.push("/(auth)/enterResetToken")
+      router.push({
+        pathname: "/(auth)/enterResetToken", // Adjust to your actual reset password screen route
+        params: { email },
+      });
+      Alert.alert("Success", "Password reset link sent to your email.");
+     
+    }
   }
 
   return (
@@ -111,13 +123,13 @@ export default function Login() {
                 color: "#303030",
               }}
             >
-              Let’s get you in
+              Forgotten Password
             </Text>
             <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your email and password
+              Please enter your email address
             </Text>
 
-            <View style={[{ marginTop: RFValue(10) }]}>
+            <View style={[{ marginTop: RFValue(30) }]}>
               <Input
                 // label="Email"
                 // leftIcon={{ type: "font-awesome", name: "envelope" }}
@@ -128,18 +140,7 @@ export default function Login() {
               />
             </View>
           </View>
-          <View>
-            <Input
-              // label="Password"
-              // leftIcon={{ type: "font-awesome", name: "lock" }}
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-              secureTextEntry={true}
-              placeholder="Password"
-              autoCapitalize={"none"}
-            />
-          </View>
-          <TouchableOpacity onPress={()=>router.push("/(auth)/forgottenPassword")}>
+
           <View
             style={{
               flexDirection: "row",
@@ -153,17 +154,15 @@ export default function Login() {
               color="black"
             />
             {"  "}
-            <Text style={[{ color: "#555", fontSize: RFValue(12) }, { textDecorationLine: "underline" }]}>
-            {"  "}Forgot Password
+            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
+              {"  "}Only registered users will get a reset link
             </Text>
           </View>
-          </TouchableOpacity>
-          
 
           <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
             //   disabled={!isChecked || loading}
-              onPress={signInWithEmail}
+              onPress={forgottenPasswordWithEmail}
               style={[
                 styles.button,
                 { backgroundColor: "#6E00FF" },
@@ -173,10 +172,13 @@ export default function Login() {
                 style={{
                   color: "#fff",
                   textAlign: "center",
+                  alignSelf: "center",
+                  justifyContent: "center",
                   fontWeight: "700",
                 }}
               >
-                Sign In
+                {!loading ? "Reset Password" : <ActivityIndicator /> }
+                
               </Text>
             </TouchableOpacity>
           </View>
@@ -198,7 +200,12 @@ export default function Login() {
                 alignSelf: "center",
               }}
             >
-              Don’t have an account yet?{" "}
+              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                <Text style={{ textDecorationLine: "underline" }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+              {"     |    "}
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
                 <Text style={{ textDecorationLine: "underline" }}>
                   Create Account
@@ -254,8 +261,8 @@ const styles = StyleSheet.create({
     marginHorizontal: RFValue(5),
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: 14,
+    paddingBottom: 14,
     alignSelf: "stretch",
   },
   mt20: {
@@ -264,6 +271,7 @@ const styles = StyleSheet.create({
 
   formPart: {
     // flex:  1,
+    marginTop: RFValue(20),
     backgroundColor: "#fff",
     padding: RFValue(20),
     borderRadius: RFValue(25),

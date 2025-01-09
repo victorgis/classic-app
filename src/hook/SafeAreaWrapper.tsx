@@ -15,7 +15,7 @@ const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
     <>
       <StatusBar
         translucent
-        backgroundColor="transparent"
+        backgroundColor="#fff"
         barStyle="dark-content" // Use "light-content" if you want the status bar text to be light
       />
       <SafeAreaView
@@ -26,6 +26,7 @@ const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
           //   ? { paddingTop: StatusBar.currentHeight }
           //   : {},
           style,
+          {backgroundColor: "#fff"}
         ]}
       >
         {children}
