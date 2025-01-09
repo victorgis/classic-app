@@ -31,10 +31,14 @@ const MainScreen = () => {
   const [activeButton, setActiveButton] = useState("");
   const [asyncUrl, setAsyncUrl] = useState("");
 
-  const staticImg = require("../../../assets/images/avatar.png");
-  const finalUrl = avatarUrl ? { uri: avatarUrl } : { uri: asyncUrl };
+  // const staticImg = require("../../../assets/images/avatar.png");
+  const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
+  const finalUrl = avatarUrl
+    ? { uri: avatarUrl }
+    : { uri: asyncUrl || profileImg };
 
   const loadAvatarFromStorage = async () => {
+    console.log("profile", profileImg);
     try {
       const storedAvatarUrl = await AsyncStorage.getItem("avatarUrl");
       if (storedAvatarUrl) {
