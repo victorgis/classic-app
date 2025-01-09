@@ -72,46 +72,47 @@ export default function Auth() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <ScrollView
+      {/* <ScrollView
         contentContainerStyle={{
           paddingHorizontal: RFValue(20),
           paddingBottom: RFValue(20),
           flexGrow: 1, // Makes content take up remaining space
         }}
-      >
-        <View style={styles.container}>
-          <View
+      > */}
+      <View style={styles.container}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            // marginTop: 100,
+            top: RFValue(60),
+            left: RFValue(20),
+            position: "absolute",
+          }}
+        >
+          <Image source={logo} />
+          <Text
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              // marginTop: 100,
-              top: RFValue(60),
-              left: RFValue(20),
-              position: "absolute",
+              color: "#fff",
+              fontWeight: "600",
+              fontSize: RFValue(14),
+              marginLeft: 8,
             }}
           >
-            <Image source={logo} />
-            <Text
-              style={{
-                color: "#fff",
-                fontWeight: "600",
-                fontSize: RFValue(14),
-                marginLeft: 8,
-              }}
-            >
-              Classic App
-            </Text>
-          </View>
-          <View
-            style={[styles.formPart, { maxHeight: RFValue(400) }]}
-            // contentContainerStyle={{
-            //   paddingHorizontal: RFValue(20),
-            //   paddingBottom: RFValue(20),
-            //   flexGrow: 1, // Makes content take up remaining space
-            //   height: RFValue(300)
-            // }}
-          >
+            Classic App
+          </Text>
+        </View>
+        {/* <ScrollView
+          style={{ maxHeight: RFValue(450) }}
+          contentContainerStyle={{
+            // paddingHorizontal: RFValue(20),
+            // paddingBottom: RFValue(20),
+            flexGrow: 1, // Makes content take up remaining space
+            justifyContent: "center",
+          }}
+        > */}
+          <View style={[styles.formPart]}>
             <View style={[styles.verticallySpaced]}>
               <Text
                 style={{
@@ -211,26 +212,35 @@ export default function Auth() {
               </Text>
             </View>
           </View>
+        {/* </ScrollView> */}
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: RFValue(40),
+          alignSelf: "center"
+        }}
+      >
+        <View>
+          <Image source={footer} />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: RFValue(20),
-          }}
-        >
-          <View>
-            <Image source={footer} />
-          </View>
-          <View style={{ marginLeft: 20 }}>
-            <Text style={{marginBottom: RFValue(5), fontWeight: "700", fontSize: RFValue(15)}}>Explore Your Interests</Text>
-            <Text>
-              <Ionicons name="hand-right-outline" size={14} color="black" />
-              Hey there, login to discover interests
-            </Text>
-          </View>
+        <View style={{ marginLeft: 20 }}>
+          <Text
+            style={{
+              marginBottom: RFValue(5),
+              fontWeight: "700",
+              fontSize: RFValue(15),
+            }}
+          >
+            Explore Your Interests
+          </Text>
+          <Text>
+            <Ionicons name="hand-right-outline" size={14} color="black" />
+            Hey there, login to discover interests
+          </Text>
         </View>
-      </ScrollView>
+      </View>
     </ImageBackground>
   );
 }
