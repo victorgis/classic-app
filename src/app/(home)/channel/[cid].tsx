@@ -17,6 +17,9 @@ import {
   useChatContext,
 } from "stream-chat-expo";
 import { RFValue } from "react-native-responsive-fontsize";
+import { router } from "expo-router";
+import { messageActions } from "stream-chat-expo";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
@@ -38,9 +41,7 @@ export default function ChannelScreen() {
       console.log("channellA", members);
 
       const memberIds = Object.keys(channel.state.members);
-      // const membersDetails = Object.values(channel.state.members);
       console.log("memberIds", memberIds);
-      // console.log("membersDetails", membersDetails);
 
       if (memberIds.includes(myID)) {
         console.log(`${myID} is in the interestArray`);
@@ -56,7 +57,11 @@ export default function ChannelScreen() {
   }, [cid]);
 
   if (!channel) {
-    return <ActivityIndicator />;
+    return (
+      <View>
+        <ActivityIndicator />
+      </View>
+    );
   }
 
   const addMember = async () => {
@@ -71,29 +76,97 @@ export default function ChannelScreen() {
   };
 
   return (
-    <Channel channel={channel}>
-      <MessageList />
+    <Channel
+      channel={channel}
+      messageActions={(params) => {
+        const { dismissOverlay, message } = params;
+
+        // Default actions
+        const actions = messageActions({ ...params }) || [];
+
+        // Adding custom actions
+        actions.push(
+          {
+            action: async () => {
+              try {
+                await client.blockUser(message.user?.id || "");
+                console.log("Blocked successfully");
+                dismissOverlay();
+              } catch (error) {
+                console.error("Error blocking user:", error);
+              }
+            },
+            actionType: "block-user",
+            title: "Block User",
+            icon: <MaterialIcons size={25} name="block" />,
+          },
+          {
+            action: async () => {
+              try {
+                const privateChannel = client.channel("messaging", {
+                  members: [message.user?.id, client.userID],
+                });
+                await privateChannel.watch();
+                console.log("Private chat started:", privateChannel.id);
+                dismissOverlay();
+
+                // Navigate to the private chat
+                // router.replace({
+                //   pathname: "/(home)/channel/[cid]",
+                //   params: { cid: privateChannel.id },
+                // });
+
+                // if (privateChannel.data?.blocked == true) {
+                //   Alert.alert("Blocked User", "This user was blocked by you");
+                //   // return (
+                //   //   <View>
+                //   //     <Text>Blocked user</Text>
+                //   //   </View>
+                //   // );
+                // } else {
+
+                // }
+
+                router.replace(`/(home)/channel/${privateChannel.cid}`);
+
+                console.log("x", privateChannel.data?.blocked);
+              } catch (error) {
+                console.error("Error creating private chat:", error);
+              }
+            },
+            actionType: "reply-privately",
+            title: "Reply Privately",
+            icon: <MaterialIcons size={25} name="chat" />,
+          }
+        );
+
+        return actions;
+      }}
+    >
+      <MessageList
+      // onPressAvatar={(user) => {
+      //   router.push({
+      //     pathname: "/profile",
+      //     params: { userId: user.id },
+      //   });
+      // }}
+      />
       <SafeAreaView edges={["bottom"]}>
         {showInput ? (
           <MessageInput />
         ) : (
           <View
-            style={[
-              {
-                backgroundColor: "#ccc",
-                padding: RFValue(8),
-                marginBottom: RFValue(18),
-              },
-            ]}
+            style={{
+              backgroundColor: "#ccc",
+              padding: RFValue(8),
+              marginBottom: RFValue(18),
+            }}
           >
             <TouchableOpacity onPress={addMember}>
-              <Text style={[{ textAlign: "center" }]}>Click here to join</Text>
+              <Text style={{ textAlign: "center" }}>Click here to join</Text>
             </TouchableOpacity>
           </View>
         )}
-        {/* {!showInput} && (
-        
-        ) */}
       </SafeAreaView>
     </Channel>
   );

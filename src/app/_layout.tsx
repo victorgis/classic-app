@@ -76,14 +76,14 @@ export default function RootLayout() {
               name="(home)"
               options={{ headerShown: false, title: "HomeScreen" }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="index"
               options={{ headerShown: false, title: "Main" }}
-            />
-            <Stack.Screen
+            /> */}
+            {/* <Stack.Screen
               name="(auth)"
               options={{ headerShown: false, title: "Main" }}
-            />
+            /> */}
           </Stack>
         </AvatarProvider>
         {/* <Slot /> */}

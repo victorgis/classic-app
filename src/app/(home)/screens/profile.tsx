@@ -7,11 +7,10 @@ import {
   Button,
   TouchableOpacity,
   Text,
-  FlatList,
 } from "react-native";
 import { Input } from "@rneui/themed";
 import { useAuth } from "@/src/providers/AuthProvider";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import Avatar from "@/src/component/Avatar";
 import { RFValue } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,37 +30,53 @@ export default function ProfileScreen() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
-  // const [asyncAvatar, setAsyncAvatar] = useState("")
-
   useEffect(() => {
     if (session) getProfile();
-    // console.log("client", client?.user?.role);
-    // Load avatar URL from AsyncStorage
   }, [session]);
 
-  // Function to load avatar URL from AsyncStorage
+  // Function to load profile data from AsyncStorage
+  const loadProfileFromStorage = async () => {
+    try {
+      const storedProfile = await AsyncStorage.getItem("userProfile");
+      if (storedProfile) {
+        const profileData = JSON.parse(storedProfile);
+        setUsername(profileData.username);
+        setFullName(profileData.full_name);
+        setWebsite(profileData.website);
+        setAvatarUrl(profileData.avatar_url);
+      } else {
+        getProfile();
+      }
+    } catch (error) {
+      console.error("Error loading profile from AsyncStorage:", error);
+    }
+  };
 
+  // Fetch profile data from Supabase
   async function getProfile() {
-    // loadAvatarFromStorage();
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url, full_name`)
+        .select("username, website, avatar_url, full_name")
         .eq("id", session?.user.id)
         .single();
+
       if (error && status !== 406) {
         throw error;
       }
 
       if (data) {
+        // Update state with data from Supabase
         setUsername(data.username);
         setWebsite(data.website);
-        // console.log("setImgae", data.avatar_url);
         setAvatarUrl(data.avatar_url);
         setFullName(data.full_name);
+
+        // Save to AsyncStorage
+        await AsyncStorage.setItem("userProfile", JSON.stringify(data));
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -72,6 +87,7 @@ export default function ProfileScreen() {
     }
   }
 
+  // Function to update the profile
   async function updateProfile({
     username,
     website,
@@ -102,6 +118,12 @@ export default function ProfileScreen() {
         throw error;
       } else {
         Alert.alert("Success", "Profile updated successfully!");
+        // After update, save to AsyncStorage
+        const updatedProfile = { username, website, avatar_url, full_name };
+        await AsyncStorage.setItem(
+          "userProfile",
+          JSON.stringify(updatedProfile)
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -189,7 +211,6 @@ export default function ProfileScreen() {
             color: "#555", // Label color
             fontSize: 14, // Label font size
             fontWeight: "light", // Label font weight
-            // marginBottom: 8, // Spacing between label and input
           }}
           inputStyle={{
             color: "#333", // Input text color
@@ -202,15 +223,6 @@ export default function ProfileScreen() {
           }}
         />
       </View>
-      {/* <FlatList
-        data={channels}
-        keyExtractor={(channel) => channel.id}
-        renderItem={({ item }) => (
-          <View style={styles.channelItem}>
-            <Text style={styles.channelName}>{item.data.name || item.id}</Text>
-          </View>
-        )}
-      /> */}
       <TouchableOpacity
         onPress={() => router.push("/(home)/screens/notificationSettings")}
       >
@@ -246,10 +258,6 @@ export default function ProfileScreen() {
           <Text style={styles.optionText}>Block List</Text>
         </View>
       </TouchableOpacity>
-
-      {/* <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View> */}
     </View>
   );
 }
@@ -274,20 +282,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 16,
     paddingVertical: 8,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#ddd",
   },
   optionText: {
     marginLeft: 16,
     fontSize: 16,
     color: "#333",
-  },
-  channelItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  channelName: {
-    fontSize: 16,
   },
 });

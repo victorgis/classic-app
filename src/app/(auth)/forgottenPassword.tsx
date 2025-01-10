@@ -49,22 +49,20 @@ export default function ForgottenPassword() {
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "classic-app://resetPassword", // Update this URL to match your deep link
-      
     });
-    
 
     setLoading(false);
-    // console.log("email", email)
 
     if (error) {
       Alert.alert("Error", error.message);
     } else {
-      // router.push("/(auth)/enterResetToken")
       router.push({
         pathname: "/(auth)/enterResetToken", // Adjust to your actual reset password screen route
       });
-      Alert.alert("Success", "Password reset token has been sent to your email.");
-     
+      Alert.alert(
+        "Success",
+        "Password reset token has been sent to your email."
+      );
     }
   }
 
@@ -161,12 +159,9 @@ export default function ForgottenPassword() {
 
           <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
-            //   disabled={!isChecked || loading}
+              //   disabled={!isChecked || loading}
               onPress={forgottenPasswordWithEmail}
-              style={[
-                styles.button,
-                { backgroundColor: "#6E00FF" },
-              ]}
+              style={[styles.button, { backgroundColor: "#6E00FF" }]}
             >
               <Text
                 style={{
@@ -177,8 +172,7 @@ export default function ForgottenPassword() {
                   fontWeight: "700",
                 }}
               >
-                {!loading ? "Reset Password" : <ActivityIndicator /> }
-                
+                {!loading ? "Reset Password" : <ActivityIndicator />}
               </Text>
             </TouchableOpacity>
           </View>
@@ -200,9 +194,7 @@ export default function ForgottenPassword() {
               }}
             >
               <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text style={{ textDecorationLine: "underline" }}>
-                  Login
-                </Text>
+                <Text style={{ textDecorationLine: "underline" }}>Login</Text>
               </TouchableOpacity>
               {"     |    "}
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>

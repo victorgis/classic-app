@@ -10,6 +10,7 @@ import {
 import { RFValue } from "react-native-responsive-fontsize";
 import { useChatContext } from "stream-chat-expo";
 import { useAuth } from "@/src/providers/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Correct import
 
 export default function BlockedList() {
   const { client } = useChatContext();
@@ -17,36 +18,60 @@ export default function BlockedList() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // console.log(user.id)
-    const blockUser = async (userId: string) => {
-      try {
-        await client.blockUser(userId);
-      } catch (err) {
-        console.log("Error blocking user:", err);
-      }
-    };
-    blockUser("c8b9db33-c7ad-4f5c-ab78-15d832493a00");
-  }, []);
+    
+    // Fetch blocked users from cache if available
+    // const fetchBlockedUsersFromCache = async () => {
+    //   const cachedBlockedUsers = await AsyncStorage.getItem("blockedUsers");
+    //   if (cachedBlockedUsers) {
+    //     setBlockedUsers(JSON.parse(cachedBlockedUsers));
+    //   } else {
+    //     getBlockedUsers();
+    //   }
+    // };
 
-  useEffect(() => {
+    // Fetch blocked users from the server
     const getBlockedUsers = async () => {
       try {
         const users = await client.getBlockedUsers();
+        console.log("blockUsr", users);
         setBlockedUsers(users.blocks);
+        // Cache the blocked users list
+        await AsyncStorage.setItem(
+          "blockedUsers",
+          JSON.stringify(users.blocks)
+        );
       } catch (error) {
         console.log("Error getting blocked users:", error);
       }
     };
     getBlockedUsers();
-  }, []);
+
+    // fetchBlockedUsersFromCache();
+  }, [client]);
+
+  // useEffect(() => {
+  //   // Function to block a user (if needed)
+  //   const blockUser = async (userId: string) => {
+  //     try {
+  //       await client.unBlockUser(userId);
+  //     } catch (err) {
+  //       console.log("Error blocking user:", err);
+  //     }
+  //   };
+
+  //   blockUser("c8b9db33-c7ad-4f5c-ab78-15d832493a00"); // Example: blocking a user
+  // }, [client]);
 
   const unBlockUser = async (userId: string) => {
     try {
       await client.unBlockUser(userId);
+      // Remove the user from the blocked list in the state
       const filteredUsers = blockedUsers.filter(
         (user) => user.blocked_user_id !== userId
       );
       setBlockedUsers(filteredUsers);
+      // Update the cache
+      await AsyncStorage.setItem("blockedUsers", JSON.stringify(filteredUsers));
     } catch (err) {
       console.log("Error unblocking user:", err);
     }

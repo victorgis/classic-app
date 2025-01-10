@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, FlatList, Image } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useChatContext } from "stream-chat-expo";
 import { useAuth } from "@/src/providers/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ModeratorInInterest() {
   const { client } = useChatContext();
@@ -13,6 +14,12 @@ export default function ModeratorInInterest() {
   useEffect(() => {
     const fetchModeratorChannels = async () => {
       try {
+        // Check if cached data exists
+        const cachedChannels = await AsyncStorage.getItem("moderatorChannels");
+        if (cachedChannels) {
+          setChannels(JSON.parse(cachedChannels));
+        }
+
         const filters = {
           members: { $in: [user?.id] },
         };
@@ -30,6 +37,12 @@ export default function ModeratorInInterest() {
             moderators: channel.data.moderators,
             avatar: channel.data.image,
           }));
+
+        // Cache the fetched channels
+        await AsyncStorage.setItem(
+          "moderatorChannels",
+          JSON.stringify(moderatedChannels)
+        );
 
         setChannels(moderatedChannels);
       } catch (error) {

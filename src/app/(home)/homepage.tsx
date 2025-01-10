@@ -61,7 +61,7 @@ const MainScreen = () => {
   };
 
   const optionsFx = () => {
-    console.log("options pressed");
+    // console.log("options pressed");
     if (showOptions == false) setShowOptions(true);
     else setShowOptions(false);
     setActiveButton(null);
