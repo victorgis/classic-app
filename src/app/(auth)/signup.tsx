@@ -17,6 +17,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { CheckBox } from "react-native-elements";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { ActivityIndicator } from "react-native";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -173,10 +174,12 @@ export default function SignUp() {
                 style={{
                   color: "#fff",
                   textAlign: "center",
+                  alignSelf: "center",
+                  justifyContent: "center",
                   fontWeight: "700",
                 }}
               >
-                Sign Up
+                {!loading ? "Sign Up" : <ActivityIndicator color={"#fff"} />}
               </Text>
             </TouchableOpacity>
           </View>

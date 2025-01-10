@@ -31,19 +31,43 @@ const HomeLayout: React.FC = () => {
           />
           <Stack.Screen
             name="screens/profile"
-            options={{ headerShown: true, title: "Profile", headerBackTitle: "back" }}
+            options={{
+              headerShown: true,
+              title: "Profile",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/notifications"
             options={{ headerShown: true, title: "Notification" }}
           />
           <Stack.Screen
+            name="screens/notificationSettings"
+            options={{ headerShown: true, title: "Manage Notification" }}
+          />
+          <Stack.Screen
+            name="screens/changePassword"
+            options={{ headerShown: true, title: "Change Password" }}
+          />
+          <Stack.Screen
             name="screens/privacypolicy"
             options={{ headerShown: true, title: "Privacy Policy" }}
           />
           <Stack.Screen
+            name="screens/ModeratorInInterest"
+            options={{ headerShown: true, title: "Moderator in interest" }}
+          />
+          <Stack.Screen
+            name="screens/BlockedList"
+            options={{ headerShown: true, title: "Blocked List" }}
+          />
+          <Stack.Screen
             name="screens/termscondition"
-            options={{ headerShown: true, title: "Terms & Conditions", headerBackTitle: "back" }}
+            options={{
+              headerShown: true,
+              title: "Terms & Conditions",
+              headerBackTitle: "back",
+            }}
           />
 
           <Stack.Screen

@@ -20,6 +20,7 @@ export default function CreateInterestScreen() {
   const fullNameInputRef = useRef(null);
 
   // Generate unique interestId on component mount
+  const userId = user?.id
   useEffect(() => {
     const generateInterestId = () => {
       // const timestamp = new Date().toISOString();
@@ -46,7 +47,8 @@ export default function CreateInterestScreen() {
       console.log("imageOOO", interestImg);
       const newChannel = client.channel("messaging", interest_id, {
         name: interest_name,
-        // members: [user.id],
+        members: [userId],
+        moderators: [userId],
         image: interestImg,
         watch: true, // this is the default
         state: true,

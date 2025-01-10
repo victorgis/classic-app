@@ -7,6 +7,7 @@ import {
   Button,
   TouchableOpacity,
   Text,
+  FlatList,
 } from "react-native";
 import { Input } from "@rneui/themed";
 import { useAuth } from "@/src/providers/AuthProvider";
@@ -17,10 +18,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAvatar } from "@/src/providers/AvatarContext";
 import { router } from "expo-router";
 
-
 export default function ProfileScreen() {
   const { session } = useAuth();
-  const { setAvatarUrl2 } = useAvatar(); 
+  const { setAvatarUrl2, avatarUrl2 } = useAvatar();
+
+  const fullNameInputRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
@@ -28,27 +30,19 @@ export default function ProfileScreen() {
   const [website, setWebsite] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const fullNameInputRef = useRef(null);
+
+  // const [asyncAvatar, setAsyncAvatar] = useState("")
 
   useEffect(() => {
     if (session) getProfile();
-    // loadAvatarFromStorage(); // Load avatar URL from AsyncStorage
+    // console.log("client", client?.user?.role);
+    // Load avatar URL from AsyncStorage
   }, [session]);
 
   // Function to load avatar URL from AsyncStorage
-  // const loadAvatarFromStorage = async () => {
-  //   try {
-  //     const storedAvatarUrl = await AsyncStorage.getItem("avatarUrl");
-  //     if (storedAvatarUrl) {
-  //       // console.log("errorGuy", storedAvatarUrl);
-  //       setAvatarUrl(storedAvatarUrl); // Set the avatar URL if it exists in AsyncStorage
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to load avatar from storage", error);
-  //   }
-  // };
 
   async function getProfile() {
+    // loadAvatarFromStorage();
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -122,7 +116,7 @@ export default function ProfileScreen() {
   // Save avatar URL to AsyncStorage whenever it's updated
   const saveAvatarToStorage = async (url: string) => {
     try {
-      const link = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${url}`
+      const link = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${url}`;
       setAvatarUrl2(link);
       await AsyncStorage.setItem("avatarUrl", link); // Store avatar URL in AsyncStorage
     } catch (error) {
@@ -151,12 +145,12 @@ export default function ProfileScreen() {
       <View style={styles.avatar}>
         <Avatar
           size={200}
-          url={avatarUrl}
+          url={avatarUrl ? avatarUrl : avatarUrl2}
           onUpload={(url: string) => {
-            console.log("uploadImage", url)
+            console.log("uploadImage", url);
             setAvatarUrl(url);
             saveAvatarToStorage(url); // Save the avatar URL to AsyncStorage
-            
+
             updateProfile({
               username,
               website,
@@ -208,34 +202,51 @@ export default function ProfileScreen() {
           }}
         />
       </View>
-      <TouchableOpacity onPress={()=>router.push("/(home)/screens/notifications")}>
+      {/* <FlatList
+        data={channels}
+        keyExtractor={(channel) => channel.id}
+        renderItem={({ item }) => (
+          <View style={styles.channelItem}>
+            <Text style={styles.channelName}>{item.data.name || item.id}</Text>
+          </View>
+        )}
+      /> */}
+      <TouchableOpacity
+        onPress={() => router.push("/(home)/screens/notificationSettings")}
+      >
         <View style={styles.option}>
           <Ionicons name="notifications-outline" size={24} color="#555" />
           <Text style={styles.optionText}>Notification</Text>
         </View>
       </TouchableOpacity>
-      
-      <TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.push("/(home)/screens/changePassword")}
+      >
         <View style={styles.option}>
           <Ionicons name="key" size={24} color="#555" />
           <Text style={styles.optionText}>Change Password</Text>
         </View>
       </TouchableOpacity>
-      
-      <TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.push("/(home)/screens/ModeratorInInterest")}
+      >
         <View style={styles.option}>
           <Ionicons name="person-outline" size={24} color="#555" />
           <Text style={styles.optionText}>Moderator in interest</Text>
         </View>
       </TouchableOpacity>
-      
-      <TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.push("/(home)/screens/BlockedList")}
+      >
         <View style={styles.option}>
           <MaterialIcons name="block" size={24} color="#555" />
           <Text style={styles.optionText}>Block List</Text>
         </View>
       </TouchableOpacity>
-      
+
       {/* <View style={styles.verticallySpaced}>
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View> */}
@@ -270,5 +281,13 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     fontSize: 16,
     color: "#333",
+  },
+  channelItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  channelName: {
+    fontSize: 16,
   },
 });

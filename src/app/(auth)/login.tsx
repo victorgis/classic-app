@@ -22,6 +22,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { ActivityIndicator } from "react-native";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -139,44 +140,49 @@ export default function Login() {
               autoCapitalize={"none"}
             />
           </View>
-          <TouchableOpacity onPress={()=>router.push("/(auth)/forgottenPassword")}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingRight: RFValue(16),
-            }}
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/forgottenPassword")}
           >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="black"
-            />
-            {"  "}
-            <Text style={[{ color: "#555", fontSize: RFValue(12) }, { textDecorationLine: "underline" }]}>
-            {"  "}Forgot Password
-            </Text>
-          </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingRight: RFValue(16),
+              }}
+            >
+              <Ionicons
+                name="information-circle-outline"
+                size={24}
+                color="black"
+              />
+              {"  "}
+              <Text
+                style={[
+                  { color: "#555", fontSize: RFValue(12) },
+                  { textDecorationLine: "underline" },
+                ]}
+              >
+                {"  "}Forgot Password
+              </Text>
+            </View>
           </TouchableOpacity>
-          
 
           <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
-            //   disabled={!isChecked || loading}
+              //   disabled={!isChecked || loading}
               onPress={signInWithEmail}
-              style={[
-                styles.button,
-                { backgroundColor: "#6E00FF" },
-              ]}
+              style={[styles.button, { backgroundColor: "#6E00FF" }]}
             >
               <Text
                 style={{
                   color: "#fff",
                   textAlign: "center",
+                  alignSelf: "center",
+                  justifyContent: "center",
                   fontWeight: "700",
                 }}
               >
-                Sign In
+                {!loading ? "Sign In" : <ActivityIndicator color={"#fff"} />}
               </Text>
             </TouchableOpacity>
           </View>

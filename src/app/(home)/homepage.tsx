@@ -79,9 +79,9 @@ const MainScreen = () => {
     setShowOptions(false);
   };
 
-  const logoutFX = () => {
+  const logoutFX = async () => {
     setActiveButton("logout");
-    supabase.auth.signOut();
+    await supabase.auth.signOut();
   };
 
   const createInterestFx = () => {

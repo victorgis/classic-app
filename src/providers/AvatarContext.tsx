@@ -4,17 +4,19 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 const AvatarContext = createContext<
   | {
       avatarUrl: string;
+      avatarUrl2: string;
       setAvatarUrl2: (url: string) => void;
     }
   | undefined
 >(undefined);
 
 export const AvatarProvider = ({ children }: { children: ReactNode }) => {
-    console.log("")
+  console.log("");
   const [avatarUrl, setAvatarUrl2] = useState<string>("");
+  const avatarUrl2 = avatarUrl;
 
   return (
-    <AvatarContext.Provider value={{ avatarUrl, setAvatarUrl2 }}>
+    <AvatarContext.Provider value={{ avatarUrl, setAvatarUrl2, avatarUrl2 }}>
       {children}
     </AvatarContext.Provider>
   );

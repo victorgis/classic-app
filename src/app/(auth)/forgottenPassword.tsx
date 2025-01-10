@@ -194,7 +194,6 @@ export default function ForgottenPassword() {
             }}
           >
             <Text
-              onPress={() => router.push("/(auth)/signup")}
               style={{
                 paddingTop: RFValue(10),
                 alignSelf: "center",
