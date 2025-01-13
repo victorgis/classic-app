@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   ViewBase,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   Pressable,
+  Keyboard,
 } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
@@ -31,11 +33,9 @@ const MainScreen = () => {
   const [activeButton, setActiveButton] = useState("");
   const [asyncUrl, setAsyncUrl] = useState("");
 
-  // const staticImg = require("../../../assets/images/avatar.png");
+  const staticImg = require("../../../assets/images/no-profile-pic-icon-11.jpg");
   const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
-  const finalUrl = avatarUrl
-    ? { uri: avatarUrl }
-    : { uri: asyncUrl || profileImg };
+  const finalUrl = avatarUrl ? { uri: avatarUrl || asyncUrl } : staticImg;
 
   const loadAvatarFromStorage = async () => {
     console.log("profile", profileImg);
@@ -106,14 +106,15 @@ const MainScreen = () => {
   return (
     <View style={styles.container}>
       {(showOptions || showSearch || showNotifications) && (
-        <Pressable
-          style={styles.overlay}
+        <TouchableWithoutFeedback
           onPress={() => {
             setShowOptions(false);
             setShowSearch(false);
             setShowNotifications(false);
           }}
-        />
+        >
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
       )}
 
       {/* Top menu section */}
@@ -209,27 +210,32 @@ const MainScreen = () => {
 
       {/* Hidden search box section */}
       {showSearch && (
-        <View style={styles.searchMenuContainer}>
-          <View style={styles.searchContainer}>
-            <MaterialIcons
-              name="search"
-              size={20}
-              color="#888"
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Search"
-              placeholderTextColor="#888"
-            />
-          </View>
-          <MaterialIcons
-            name="filter-list"
-            size={24}
-            color="#6E00FF"
-            style={styles.filterIcon}
-          />
-        </View>
+        <KeyboardAvoidingView behavior="padding">
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+            <View style={styles.searchMenuContainer}>
+              <View style={styles.searchContainer}>
+                <MaterialIcons
+                  name="search"
+                  size={20}
+                  color="#888"
+                  style={styles.searchIcon}
+                />
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Search"
+                  placeholderTextColor="#888"
+                  onFocus={() => setShowSearch(true)} // Ensure it doesn't dismiss when focusing
+                />
+              </View>
+              <MaterialIcons
+                name="filter-list"
+                size={24}
+                color="#6E00FF"
+                style={styles.filterIcon}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       )}
 
       {/* Tabs section */}
@@ -265,6 +271,7 @@ const MainScreen = () => {
       {/* Rendered Content */}
       {renderContent()}
     </View>
+    //</TouchableWithoutFeedback>
   );
 };
 export default MainScreen;

@@ -23,14 +23,9 @@ import { useEffect } from "react";
 
 
 export default function EnterResetToken() {
-  // const [token, setToken] = useState("");
-  // const [loading, setLoading] = useState(false);
-  // const [acess_token, setAccess_token] = useState()
-  // const [refresh_token, setRefresh_token] = useState()
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
-  const footer = require("../../../assets/images/footer.png");
   // const { email } = useLocalSearchParams();
 
 
@@ -116,7 +111,8 @@ export default function EnterResetToken() {
         </View>
         <View style={[styles.formPart]}>
           <Text style={{fontSize: RFValue(14)}}>Kindly check your email for a reset link. Also check your spam folders if you haven't found it</Text>
-          <TouchableOpacity onPress={()=>router.back()} ><Text style={{fontSize: RFValue(14), fontWeight: "600", paddingTop: RFValue(20)}}> <MaterialIcons name="arrow-back" size={14} /> Go back</Text></TouchableOpacity>
+          <ActivityIndicator color={"#fff"} style={{alignSelf: "center"}} />
+          {/* <TouchableOpacity onPress={()=>router.back()} ><Text style={{fontSize: RFValue(14), fontWeight: "600", paddingTop: RFValue(20)}}> <MaterialIcons name="arrow-back" size={14} /> Go back</Text></TouchableOpacity> */}
           {/* <View style={[styles.verticallySpaced]}>
             <Text
               style={{
@@ -206,33 +202,7 @@ export default function EnterResetToken() {
           </View> */}
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: RFValue(40),
-          alignSelf: "center",
-        }}
-      >
-        <View>
-          <Image source={footer} />
-        </View>
-        <View style={{ marginLeft: 20 }}>
-          <Text
-            style={{
-              marginBottom: RFValue(5),
-              fontWeight: "700",
-              fontSize: RFValue(15),
-            }}
-          >
-            Explore Your Interests
-          </Text>
-          <Text>
-            <Ionicons name="hand-right-outline" size={14} color="black" /> Hey
-            there, login to discover interests
-          </Text>
-        </View>
-      </View>
+      
     </ImageBackground>
   );
 }

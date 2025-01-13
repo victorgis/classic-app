@@ -22,6 +22,8 @@ export default function ProfileScreen() {
   const { session } = useAuth();
   const { setAvatarUrl2, avatarUrl2 } = useAvatar();
 
+  console.log("w2", avatarUrl2);
+
   const fullNameInputRef = useRef(null);
 
   const [loading, setLoading] = useState(false);

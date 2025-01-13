@@ -39,17 +39,18 @@ export default function RootLayout() {
       console.log("Extracted Params:", params); // Log extracted params
 
       if (params?.type === "recovery" && params?.access_token) {
+        console.log("Param is recovery")
         router.replace(
           `/resetPassword?access_token=${params.access_token}&refresh_token=${params.refresh_token}`
         );
       } else if (params?.type === "signup" && params?.access_token) {
+        console.log("Param is signup");
         router.replace(
           `/login?access_token=${params.access_token}&refresh_token=${params.refresh_token}`
         );
       } 
       else {
         console.log("Missing or invalid token:", params);
-        // Alert.alert("Error", "Invalid or missing access token.");
       }
       
     };
@@ -73,16 +74,33 @@ export default function RootLayout() {
         <AvatarProvider>
           <Stack>
             <Stack.Screen
-              name="(home)"
+              name="index"
               options={{ headerShown: false, title: "HomeScreen" }}
             />
+
             <Stack.Screen
-              name="index"
-              options={{ headerShown: false, title: "Main" }}
+              name="(auth)/login"
+              options={{ headerShown: false, title: "Login" }}
             />
             <Stack.Screen
-              name="(auth)"
-              options={{ headerShown: false, title: "Main" }}
+              name="(auth)/signup"
+              options={{ headerShown: false, title: "Signup" }}
+            />
+            <Stack.Screen
+              name="(auth)/forgottenPassword"
+              options={{ headerShown: false, title: "Forgotten Password" }}
+            />
+            <Stack.Screen
+              name="(auth)/resetPassword"
+              options={{ headerShown: false, title: "Reset Password" }}
+            />
+            <Stack.Screen
+              name="(auth)/enterResetToken"
+              options={{ headerShown: false, title: "Waiting Page" }}
+            />
+            <Stack.Screen
+              name="(home)"
+              options={{ headerShown: false, title: "Home Page" }}
             />
           </Stack>
         </AvatarProvider>

@@ -27,7 +27,6 @@ import { router } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { Redirect } from "expo-router";
-import { ScreenHeight } from "react-native-elements/dist/helpers";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -42,7 +41,11 @@ AppState.addEventListener("change", (state) => {
 });
 
 export default function Login() {
-  
+  // const { session } = useAuth();
+
+  // function loginNow(loginSession: any) {
+  //   if (loginSession) return <Redirect href={"/(home)/homepage"} />;
+  // }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -75,37 +78,37 @@ export default function Login() {
   }
 
   return (
-    <ImageBackground
-      source={backImg}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: RFValue(20),
-          paddingBottom: RFValue(20),
-        }}
-        keyboardShouldPersistTaps="handled"
+ 
+      <ImageBackground
+        source={backImg}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        {/* <ScrollView
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: RFValue(20),
+            paddingBottom: RFValue(20),
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* <ScrollView
         contentContainerStyle={{
           paddingHorizontal: RFValue(20),
           paddingBottom: RFValue(20),
           flexGrow: 1, // Makes content take up remaining space
         }}
       > */}
-        <View style={styles.container}>
-          <View style={[styles.part]}>
+          <View style={styles.container}>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                // justifyContent: "center",
-                marginBottom: RFValue(60),
-                // top: RFValue(60),
-                // left: RFValue(20),
-                // position: "absolute",
+                justifyContent: "center",
+                // marginTop: 100,
+                top: RFValue(60),
+                left: RFValue(20),
+                position: "absolute",
               }}
             >
               <Image source={logo} />
@@ -120,11 +123,20 @@ export default function Login() {
                 Classic App
               </Text>
             </View>
-            <View style={styles.formPart}>
+            {/* <ScrollView
+          style={{ maxHeight: RFValue(450) }}
+          contentContainerStyle={{
+            // paddingHorizontal: RFValue(20),
+            // paddingBottom: RFValue(20),
+            flexGrow: 1, // Makes content take up remaining space
+            justifyContent: "center",
+          }}
+        > */}
+            <View style={[styles.formPart]}>
               <View style={[styles.verticallySpaced]}>
                 <Text
                   style={{
-                    fontSize: RFValue(20),
+                    fontSize: RFValue(24),
                     fontWeight: "700",
                     color: "#303030",
                   }}
@@ -137,6 +149,8 @@ export default function Login() {
 
                 <View style={[{ marginTop: RFValue(10) }]}>
                   <Input
+                    // label="Email"
+                    // leftIcon={{ type: "font-awesome", name: "envelope" }}
                     onChangeText={(text) => setEmail(text)}
                     value={email}
                     placeholder="email@address.com"
@@ -146,6 +160,8 @@ export default function Login() {
               </View>
               <View>
                 <Input
+                  // label="Password"
+                  // leftIcon={{ type: "font-awesome", name: "lock" }}
                   onChangeText={(text) => setPassword(text)}
                   value={password}
                   secureTextEntry={true}
@@ -234,31 +250,61 @@ export default function Login() {
                 </Text>
               </View>
             </View>
-          </View>
 
-          {/* </ScrollView> */}
-        </View>
-      </ScrollView>
-    </ImageBackground>
+            {/* </ScrollView> */}
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: RFValue(30),
+              alignSelf: "center",
+            }}
+          >
+            <View>
+              <Image source={footer} />
+            </View>
+            <View style={{ marginLeft: 20 }}>
+              <Text
+                style={{
+                  marginBottom: RFValue(5),
+                  fontWeight: "700",
+                  fontSize: RFValue(15),
+                }}
+              >
+                Explore Your Interests
+              </Text>
+              <Text>
+                <Ionicons name="hand-right-outline" size={14} color="black" />
+                Hey there, login to discover interests
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    width: "100%",
+    height: "100%",
   },
   container: {
     flex: 1,
-    marginTop: RFValue(30),
-    // justifyContent: "center",
+    justifyContent: "center",
     alignItems: "center",
-    // padding: RFValue(10),
+    padding: RFValue(10),
     marginHorizontal: RFValue(5),
   },
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
     alignSelf: "stretch",
+  },
+  mt20: {
+    marginTop: 20,
   },
 
   formPart: {
@@ -269,7 +315,6 @@ const styles = StyleSheet.create({
     // maxHeight: 400,
     width: "100%",
   },
-  part: {},
   button: {
     backgroundColor: "#6E00FF",
     color: "#fff",

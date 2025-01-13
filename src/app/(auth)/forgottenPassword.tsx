@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Button, Input } from "@rneui/themed";
@@ -49,9 +50,7 @@ export default function ForgottenPassword() {
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "classic-app://resetPassword", // Update this URL to match your deep link
-      
     });
-    
 
     setLoading(false);
     // console.log("email", email)
@@ -63,8 +62,10 @@ export default function ForgottenPassword() {
       router.push({
         pathname: "/(auth)/enterResetToken", // Adjust to your actual reset password screen route
       });
-      Alert.alert("Success", "Password reset token has been sent to your email.");
-     
+      Alert.alert(
+        "Success",
+        "Password reset token has been sent to your email."
+      );
     }
   }
 
@@ -74,174 +75,122 @@ export default function ForgottenPassword() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      {/* <ScrollView
+      <ScrollView
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: RFValue(20),
           paddingBottom: RFValue(20),
-          flexGrow: 1, // Makes content take up remaining space
         }}
-      > */}
-      <View style={styles.container}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            // marginTop: 100,
-            top: RFValue(60),
-            left: RFValue(20),
-            position: "absolute",
-          }}
-        >
-          <Image source={logo} />
-          <Text
-            style={{
-              color: "#fff",
-              fontWeight: "600",
-              fontSize: RFValue(14),
-              marginLeft: 8,
-            }}
-          >
-            Classic App
-          </Text>
-        </View>
-        {/* <ScrollView
-          style={{ maxHeight: RFValue(450) }}
-          contentContainerStyle={{
-            // paddingHorizontal: RFValue(20),
-            // paddingBottom: RFValue(20),
-            flexGrow: 1, // Makes content take up remaining space
-            justifyContent: "center",
-          }}
-        > */}
-        <View style={[styles.formPart]}>
-          <View style={[styles.verticallySpaced]}>
-            <Text
-              style={{
-                fontSize: RFValue(24),
-                fontWeight: "700",
-                color: "#303030",
-              }}
-            >
-              Forgotten Password
-            </Text>
-            <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your email address
-            </Text>
-
-            <View style={[{ marginTop: RFValue(30) }]}>
-              <Input
-                // label="Email"
-                // leftIcon={{ type: "font-awesome", name: "envelope" }}
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="email@address.com"
-                autoCapitalize={"none"}
-              />
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
+          <View style={{ alignSelf: "stretch" }}>
+            <View style={styles.header}>
+              <Image source={logo} />
+              <Text style={styles.logoText}>Classic App</Text>
             </View>
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingRight: RFValue(16),
-            }}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="black"
-            />
-            {"  "}
-            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
-              {"  "}Only registered users will get a reset link
-            </Text>
-          </View>
+          <View style={[styles.formPart]}>
+            <View>
+              <Text
+                style={{
+                  fontSize: RFValue(24),
+                  fontWeight: "700",
+                  color: "#303030",
+                }}
+              >
+                Forgotten Password
+              </Text>
+              <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
+                Please enter your email address
+              </Text>
 
-          <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
-            <TouchableOpacity
-            //   disabled={!isChecked || loading}
-              onPress={forgottenPasswordWithEmail}
-              style={[
-                styles.button,
-                { backgroundColor: "#6E00FF" },
-              ]}
+              <View style={[{ marginTop: RFValue(30) }]}>
+                <Input
+                  // label="Email"
+                  // leftIcon={{ type: "font-awesome", name: "envelope" }}
+                  onChangeText={(text) => setEmail(text)}
+                  value={email}
+                  placeholder="email@address.com"
+                  autoCapitalize={"none"}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingRight: RFValue(16),
+              }}
+            >
+              <Ionicons
+                name="information-circle-outline"
+                size={24}
+                color="black"
+              />
+              {"  "}
+              <Text style={{ color: "#555", fontSize: RFValue(12) }}>
+                {"  "}Only registered users will get a reset link
+              </Text>
+            </View>
+
+            <View style={[{ marginTop: RFValue(20) }]}>
+              <TouchableOpacity
+                //   disabled={!isChecked || loading}
+                onPress={forgottenPasswordWithEmail}
+                style={[styles.button, { backgroundColor: "#6E00FF" }]}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    textAlign: "center",
+                    alignSelf: "center",
+                    justifyContent: "center",
+                    fontWeight: "700",
+                  }}
+                >
+                  {!loading ? (
+                    "Reset Password"
+                  ) : (
+                    <ActivityIndicator color={"#fff"} />
+                  )}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: RFValue(15),
+                // paddingTop: RFValue(15),
+                borderTopWidth: 1,
+                borderTopColor: "#E7E7E7",
+                width: "100%",
+              }}
             >
               <Text
                 style={{
-                  color: "#fff",
-                  textAlign: "center",
+                  paddingTop: RFValue(10),
                   alignSelf: "center",
-                  justifyContent: "center",
-                  fontWeight: "700",
                 }}
               >
-                {!loading ? "Reset Password" : <ActivityIndicator /> }
-                
+                <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                  <Text style={{ textDecorationLine: "underline" }}>Login</Text>
+                </TouchableOpacity>
+                {"     |    "}
+                <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
+                  <Text style={{ textDecorationLine: "underline" }}>
+                    Create Account
+                  </Text>
+                </TouchableOpacity>
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: RFValue(15),
-              // paddingTop: RFValue(15),
-              borderTopWidth: 1,
-              borderTopColor: "#E7E7E7",
-              width: "100%",
-            }}
-          >
-            <Text
-              style={{
-                paddingTop: RFValue(10),
-                alignSelf: "center",
-              }}
-            >
-              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text style={{ textDecorationLine: "underline" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
-              {"     |    "}
-              <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-                <Text style={{ textDecorationLine: "underline" }}>
-                  Create Account
-                </Text>
-              </TouchableOpacity>
-            </Text>
+            </View>
           </View>
         </View>
         {/* </ScrollView> */}
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: RFValue(40),
-          alignSelf: "center",
-        }}
-      >
-        <View>
-          <Image source={footer} />
-        </View>
-        <View style={{ marginLeft: 20 }}>
-          <Text
-            style={{
-              marginBottom: RFValue(5),
-              fontWeight: "700",
-              fontSize: RFValue(15),
-            }}
-          >
-            Explore Your Interests
-          </Text>
-          <Text>
-            <Ionicons name="hand-right-outline" size={14} color="black" />
-            Hey there, login to discover interests
-          </Text>
-        </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -249,39 +198,74 @@ export default function ForgottenPassword() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    width: "100%",
-    height: "100%",
   },
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: RFValue(10),
-    marginHorizontal: RFValue(5),
+    marginTop: RFValue(30),
   },
-  verticallySpaced: {
-    paddingTop: 14,
-    paddingBottom: 14,
-    alignSelf: "stretch",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: RFValue(60),
   },
-  mt20: {
-    marginTop: 20,
+  logoText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: RFValue(14),
+    marginLeft: 8,
   },
-
   formPart: {
-    // flex:  1,
-    marginTop: RFValue(20),
     backgroundColor: "#fff",
     padding: RFValue(20),
     borderRadius: RFValue(25),
     width: "100%",
   },
+  formTitle: {
+    fontSize: RFValue(24),
+    fontWeight: "700",
+    color: "#303030",
+  },
+  formSubtitle: {
+    color: "#8C8C8C",
+    marginVertical: RFValue(5),
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: RFValue(16),
+  },
+  checkbox: {
+    margin: 0,
+    padding: 0,
+  },
+  checkboxText: {
+    color: "#555",
+    fontSize: RFValue(12),
+  },
+  underlineText: {
+    textDecorationLine: "underline",
+  },
   button: {
     backgroundColor: "#6E00FF",
-    color: "#fff",
     padding: RFValue(10),
     width: RFValue(150),
     borderRadius: RFValue(8),
     alignSelf: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "700",
+  },
+  footer: {
+    marginTop: RFValue(20),
+    borderTopWidth: 1,
+    borderTopColor: "#E7E7E7",
+    paddingTop: RFValue(10),
+    alignItems: "center",
+  },
+  footerText: {
+    textAlign: "center",
   },
 });

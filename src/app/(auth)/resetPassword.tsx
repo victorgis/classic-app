@@ -40,7 +40,7 @@ AppState.addEventListener("change", (state) => {
 
 type Params = {
   access_token: string;
-  refresh_token: string
+  refresh_token: string;
 };
 
 export default function ResetPassword() {
@@ -48,8 +48,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const { access_token, refresh_token } = useLocalSearchParams<Params>();
-  const [sessionInitialized, setSessionInitialized] = useState(false)
-
+  const [sessionInitialized, setSessionInitialized] = useState(false);
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
@@ -63,15 +62,15 @@ export default function ResetPassword() {
   //       supabase.auth.stopAutoRefresh();
   //     }
   //   };
-  
+
   //   AppState.addEventListener("change", handleAppStateChange);
-  
+
   //   return () => {
   //     // AppState.removeEventListener("change", handleAppStateChange);
   //     console.log("error that I don't know")
   //   };
   // }, []);
-  
+
   // Initialize session using access_token
   useEffect(() => {
     const setSession = async () => {
@@ -93,11 +92,8 @@ export default function ResetPassword() {
 
     setSession();
   }, [access_token]);
-  
-
 
   const handleResetPassword = async () => {
-    
     if (!password || password.length < 6) {
       Alert.alert("Error", "Password must be at least 6 characters.");
       return;
@@ -118,9 +114,8 @@ export default function ResetPassword() {
         "Success",
         "Password reset successful! Redirecting to login."
       );
-      router.replace("/(auth)/login");
+      router.replace("/login");
     }
-    
   };
 
   // Show a loading message until the session is initialized
@@ -132,98 +127,86 @@ export default function ResetPassword() {
     );
   }
 
-  
-
   return (
     <ImageBackground
       source={backImg}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: RFValue(20),
+          paddingBottom: RFValue(20),
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
+          <View style={{ alignSelf: "stretch" }}>
+            <View style={styles.header}>
+              <Image source={logo} />
+              <Text style={styles.logoText}>Classic App</Text>
+            </View>
+          </View>
+          <View style={[styles.formPart]}>
+            <View style={[styles.verticallySpaced]}>
+              <Text
+                style={{
+                  fontSize: RFValue(24),
+                  fontWeight: "700",
+                  color: "#303030",
+                }}
+              >
+                Reset Password
+              </Text>
+              <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
+                Please enter your new password
+              </Text>
 
-      <View style={styles.container}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            // marginTop: 100,
-            top: RFValue(60),
-            left: RFValue(20),
-            position: "absolute",
-          }}
-        >
-          <Image source={logo} />
-          <Text
-            style={{
-              color: "#fff",
-              fontWeight: "600",
-              fontSize: RFValue(14),
-              marginLeft: 8,
-            }}
-          >
-            Classic App
-          </Text>
-        </View>
-        <View style={[styles.formPart]}>
-          <View style={[styles.verticallySpaced]}>
-            <Text
+              <TextInput
+                style={styles.input}
+                placeholder="New Password"
+                secureTextEntry
+                onChangeText={setPassword}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                secureTextEntry
+                onChangeText={setConfirmPassword}
+              />
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleResetPassword}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Updating..." : "Reset Password"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View
               style={{
-                fontSize: RFValue(24),
-                fontWeight: "700",
-                color: "#303030",
+                flexDirection: "row",
+                alignItems: "center",
+                paddingRight: RFValue(16),
               }}
             >
-              Reset Password
-            </Text>
-            <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your new password
-            </Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="New Password"
-              secureTextEntry
-              onChangeText={setPassword}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry
-              onChangeText={setConfirmPassword}
-            />
-
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleResetPassword}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? "Updating..." : "Reset Password"}
+              <Ionicons
+                name="information-circle-outline"
+                size={24}
+                color="black"
+              />
+              {"  "}
+              <Text style={{ color: "#555", fontSize: RFValue(12) }}>
+                {"  "}Store your password securely
               </Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingRight: RFValue(16),
-            }}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="black"
-            />
-            {"  "}
-            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
-              {"  "}Store your password securely
-            </Text>
-          </View>
+            </View>
 
-          {/* <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
+            {/* <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
             <TouchableOpacity
               style={[
                 styles.button,
@@ -241,66 +224,38 @@ export default function ResetPassword() {
               </Text>
             </TouchableOpacity>
           </View> */}
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: RFValue(15),
-              // paddingTop: RFValue(15),
-              borderTopWidth: 1,
-              borderTopColor: "#E7E7E7",
-              width: "100%",
-            }}
-          >
-            <Text
+            <View
               style={{
-                paddingTop: RFValue(10),
-                alignSelf: "center",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: RFValue(15),
+                // paddingTop: RFValue(15),
+                borderTopWidth: 1,
+                borderTopColor: "#E7E7E7",
+                width: "100%",
               }}
             >
-              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text style={{ textDecorationLine: "underline" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
-              {"     |    "}
-              <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-                <Text style={{ textDecorationLine: "underline" }}>
-                  Create Account
-                </Text>
-              </TouchableOpacity>
-            </Text>
+              <Text
+                style={{
+                  paddingTop: RFValue(10),
+                  alignSelf: "center",
+                }}
+              >
+                <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                  <Text style={{ textDecorationLine: "underline" }}>Login</Text>
+                </TouchableOpacity>
+                {"     |    "}
+                <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
+                  <Text style={{ textDecorationLine: "underline" }}>
+                    Create Account
+                  </Text>
+                </TouchableOpacity>
+              </Text>
+            </View>
           </View>
         </View>
-        {/* </ScrollView> */}
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: RFValue(40),
-          alignSelf: "center",
-        }}
-      >
-        <View>
-          <Image source={footer} />
-        </View>
-        <View style={{ marginLeft: 20 }}>
-          <Text
-            style={{
-              marginBottom: RFValue(5),
-              fontWeight: "700",
-              fontSize: RFValue(15),
-            }}
-          >
-            Explore Your Interests
-          </Text>
-          <Text>
-            <Ionicons name="hand-right-outline" size={14} color="black" />
-            Hey there, login to discover interests
-          </Text>
-        </View>
-      </View>
+      </ScrollView>
+      
     </ImageBackground>
   );
 }
@@ -308,15 +263,11 @@ export default function ResetPassword() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    width: "100%",
-    height: "100%",
   },
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: RFValue(10),
-    marginHorizontal: RFValue(5),
+    marginTop: RFValue(30),
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -341,9 +292,12 @@ const styles = StyleSheet.create({
     width: RFValue(150),
     borderRadius: RFValue(8),
     alignSelf: "center",
+    marginTop: RFValue(20)
   },
   input: {
     width: RFValue(260),
+    borderBottomWidth: RFValue(1),
+    borderBottomColor: "#262626",
     padding: 12,
     marginBottom: 16,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -355,5 +309,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: RFValue(60),
+  },
+  logoText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: RFValue(14),
+    marginLeft: 8,
   },
 });

@@ -5,23 +5,25 @@ import {
   View,
   AppState,
   ImageBackground,
-  Dimensions,
   ScrollView,
   Text,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { supabase } from "../../lib/supabase";
-import { Button, Input } from "@rneui/themed";
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { Input } from "@rneui/themed";
+import { RFValue } from "react-native-responsive-fontsize";
 import { CheckBox } from "react-native-elements";
-import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Redirect } from "expo-router";
+import { useEffect } from "react";
+import * as Linking from "expo-linking";
+import { useAuth } from "@/src/providers/AuthProvider";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
+// onAuthStateChange events with the TOKEN_REFRESHED or SIGNED_OUT event
 // if the user's session is terminated. This should only be registered once.
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -32,6 +34,9 @@ AppState.addEventListener("change", (state) => {
 });
 
 export default function SignUp() {
+  const { session } = useAuth();
+  if (session) return <Redirect href={"/(home)/homepage"} />;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,22 +44,48 @@ export default function SignUp() {
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
-  const footer = require("../../../assets/images/footer.png");
+
+  useEffect(() => {
+    // Listen for deeplink events
+    const handleDeeplink = ({ url }: any) => {
+      const parsed = Linking.parse(url);
+      if (parsed.path === "login") {
+        Alert.alert("Email Verified", "Your email has been confirmed!");
+        router.replace("/(auth)/login");
+      }
+    };
+
+    const subscription = Linking.addEventListener("url", handleDeeplink);
+    return () => subscription.remove();
+  }, []);
 
   async function signUpWithEmail() {
-    setLoading(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    if (!email || !password || !isChecked) {
+      Alert.alert("Error", "Please fill all fields and accept the terms.");
+      return;
+    }
 
-    if (error) Alert.alert("Error", error.message);
-    if (!session)
-      Alert.alert("Success", "Please check your inbox for email verification!");
-    setLoading(false);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: "classic-app://login", // Deeplink for verification
+        },
+      });
+
+      if (error) throw error;
+
+      Alert.alert(
+        "Success",
+        "Check your email for a verification link. Once verified, you can log in!"
+      );
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -63,180 +94,80 @@ export default function SignUp() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      {/* <ScrollView
+      <ScrollView
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: RFValue(20),
           paddingBottom: RFValue(20),
-          flexGrow: 1, // Makes content take up remaining space
         }}
-      > */}
-      <View style={styles.container}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            // marginTop: 100,
-            top: RFValue(60),
-            left: RFValue(20),
-            position: "absolute",
-          }}
-        >
-          <Image source={logo} />
-          <Text
-            style={{
-              color: "#fff",
-              fontWeight: "600",
-              fontSize: RFValue(14),
-              marginLeft: 8,
-            }}
-          >
-            Classic App
-          </Text>
-        </View>
-        {/* <ScrollView
-          style={{ maxHeight: RFValue(450) }}
-          contentContainerStyle={{
-            // paddingHorizontal: RFValue(20),
-            // paddingBottom: RFValue(20),
-            flexGrow: 1, // Makes content take up remaining space
-            justifyContent: "center",
-          }}
-        > */}
-        <View style={[styles.formPart]}>
-          <View style={[styles.verticallySpaced]}>
-            <Text
-              style={{
-                fontSize: RFValue(24),
-                fontWeight: "700",
-                color: "#303030",
-              }}
-            >
-              Create Account
-            </Text>
-            <Text style={{ color: "#8C8C8C", marginVertical: RFValue(5) }}>
-              Please enter your details
-            </Text>
-
-            <View style={[{ marginTop: RFValue(10) }]}>
-              <Input
-                // label="Email"
-                // leftIcon={{ type: "font-awesome", name: "envelope" }}
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="email@address.com"
-                autoCapitalize={"none"}
-              />
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.container}>
+          <View style={{ alignSelf: "stretch" }}>
+            <View style={styles.header}>
+              <Image source={logo} />
+              <Text style={styles.logoText}>Classic App</Text>
             </View>
           </View>
-          <View>
+
+          <View style={styles.formPart}>
+            <Text style={styles.formTitle}>Create Account</Text>
+            <Text style={styles.formSubtitle}>Please enter your details</Text>
+
             <Input
-              // label="Password"
-              // leftIcon={{ type: "font-awesome", name: "lock" }}
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+              placeholder="email@address.com"
+              autoCapitalize="none"
+            />
+
+            <Input
               onChangeText={(text) => setPassword(text)}
               value={password}
               secureTextEntry={true}
               placeholder="Password"
-              autoCapitalize={"none"}
+              autoCapitalize="none"
             />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingRight: RFValue(16),
-            }}
-          >
-            <CheckBox
-              checked={isChecked}
-              onPress={() => setIsChecked(!isChecked)} // Manage state for the checkbox
-              containerStyle={{ margin: 0, padding: 0 }}
-            />
-            <Text style={{ color: "#555", fontSize: RFValue(12) }}>
-              By signing up, you agree to our
-              <Text style={{ textDecorationLine: "underline" }}>
-                {" "}
-                Terms & Conditions
-              </Text>
-            </Text>
-          </View>
 
-          <View style={[styles.verticallySpaced, { marginTop: RFValue(20) }]}>
+            <View style={styles.checkboxContainer}>
+              <CheckBox
+                checked={isChecked}
+                onPress={() => setIsChecked(!isChecked)}
+                containerStyle={styles.checkbox}
+              />
+              <Text style={styles.checkboxText}>
+                By signing up, you agree to our
+                <Text style={styles.underlineText}> Terms & Conditions</Text>
+              </Text>
+            </View>
+
             <TouchableOpacity
               disabled={!isChecked || loading}
               onPress={signUpWithEmail}
               style={[
                 styles.button,
-                { backgroundColor: !isChecked ? "#ccc" : "#6E00FF" },
+                {
+                  backgroundColor: !isChecked ? "#ccc" : "#6E00FF",
+                  marginTop: RFValue(20),
+                },
               ]}
             >
-              <Text
-                style={{
-                  color: "#fff",
-                  textAlign: "center",
-                  alignSelf: "center",
-                  justifyContent: "center",
-                  fontWeight: "700",
-                }}
-              >
-                {!loading ? "Sign Up" : <ActivityIndicator color={"#fff"} />}
+              <Text style={styles.buttonText}>
+                {loading ? <ActivityIndicator color="#fff" /> : "Sign Up"}
               </Text>
             </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              alignSelf: "center",
-              justifyContent: "center",
-              marginTop: RFValue(15),
-              // paddingTop: RFValue(15),
-              borderTopWidth: 1,
-              borderTopColor: "#E7E7E7",
-              width: "100%",
-            }}
-          >
-            <Text
-              onPress={() => router.push("/(auth)/login")}
-              style={{
-                paddingTop: RFValue(10),
-                alignSelf: "center",
-              }}
-            >
-              Already have an account?{" "}
-              <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text style={{ textDecorationLine: "underline" }}>Login</Text>
-              </TouchableOpacity>
-            </Text>
+
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>
+                Already have an account?{" "}
+                <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
+                  <Text style={styles.underlineText}>Login</Text>
+                </TouchableOpacity>
+              </Text>
+            </View>
           </View>
         </View>
-        {/* </ScrollView> */}
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: RFValue(40),
-          alignSelf: "center",
-        }}
-      >
-        <View>
-          <Image source={footer} />
-        </View>
-        <View style={{ marginLeft: 20 }}>
-          <Text
-            style={{
-              marginBottom: RFValue(5),
-              fontWeight: "700",
-              fontSize: RFValue(15),
-            }}
-          >
-            Explore Your Interests
-          </Text>
-          <Text>
-            <Ionicons name="hand-right-outline" size={14} color="black" />
-            Hey there, login to discover interests
-          </Text>
-        </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -244,38 +175,74 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    width: "100%",
-    height: "100%",
   },
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: RFValue(10),
-    marginHorizontal: RFValue(5),
+    marginTop: RFValue(30),
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: "stretch",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: RFValue(60),
   },
-  mt20: {
-    marginTop: 20,
+  logoText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: RFValue(14),
+    marginLeft: 8,
   },
-
   formPart: {
-    // flex:  1,
     backgroundColor: "#fff",
     padding: RFValue(20),
     borderRadius: RFValue(25),
     width: "100%",
   },
+  formTitle: {
+    fontSize: RFValue(24),
+    fontWeight: "700",
+    color: "#303030",
+  },
+  formSubtitle: {
+    color: "#8C8C8C",
+    marginVertical: RFValue(5),
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: RFValue(16),
+  },
+  checkbox: {
+    margin: 0,
+    padding: 0,
+  },
+  checkboxText: {
+    color: "#555",
+    fontSize: RFValue(12),
+  },
+  underlineText: {
+    textDecorationLine: "underline",
+  },
   button: {
     backgroundColor: "#6E00FF",
-    color: "#fff",
     padding: RFValue(10),
     width: RFValue(150),
     borderRadius: RFValue(8),
     alignSelf: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "700",
+  },
+  footer: {
+    marginTop: RFValue(20),
+    borderTopWidth: 1,
+    borderTopColor: "#E7E7E7",
+    paddingTop: RFValue(10),
+    alignItems: "center",
+  },
+  footerText: {
+    textAlign: "center",
   },
 });
