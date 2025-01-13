@@ -1,36 +1,77 @@
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
   Alert,
-  Image
+  StyleSheet,
+  View,
+  AppState,
+  ImageBackground,
+  Dimensions,
+  ScrollView,
+  TextInput,
+  Text,
+  Image,
+  TouchableOpacity,
 } from "react-native";
-import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { RFValue } from "react-native-responsive-fontsize";
-import { Ionicons } from "@expo/vector-icons";
+import { Button, Input } from "@rneui/themed";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { CheckBox } from "react-native-elements";
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+
+// Tells Supabase Auth to continuously refresh the session automatically if
+// the app is in the foreground. When this is added, you will continue to receive
+// onAuthStateChange events with the TOKEN_REFRESHED or SIGNED_OUT event
+// if the user's session is terminated. This should only be registered once.
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
+  }
+});
 
 type Params = {
   access_token: string;
-  refresh_token: string;
+  refresh_token: string
 };
 
 export default function ResetPassword() {
-  const [password, setPassword] = useState<string>("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [sessionInitialized, setSessionInitialized] = useState<boolean>(false);
-  const router = useRouter();
-  const { access_token, refresh_token } = useLocalSearchParams<Params>(); // Extract access_token from the URL
+  const [loading, setLoading] = useState(false);
+  const { access_token, refresh_token } = useLocalSearchParams<Params>();
+  const [sessionInitialized, setSessionInitialized] = useState(false)
+
 
   const backImg = require("../../../assets/images/authPaper.png");
   const logo = require("../../../assets/images/logo.png");
   const footer = require("../../../assets/images/footer.png");
 
+  // useEffect(() => {
+  //   const handleAppStateChange = (state) => {
+  //     if (state === "active") {
+  //       supabase.auth.startAutoRefresh();
+  //     } else {
+  //       supabase.auth.stopAutoRefresh();
+  //     }
+  //   };
+  
+  //   AppState.addEventListener("change", handleAppStateChange);
+  
+  //   return () => {
+  //     // AppState.removeEventListener("change", handleAppStateChange);
+  //     console.log("error that I don't know")
+  //   };
+  // }, []);
+  
   // Initialize session using access_token
   useEffect(() => {
     const setSession = async () => {
@@ -52,8 +93,11 @@ export default function ResetPassword() {
 
     setSession();
   }, [access_token]);
+  
+
 
   const handleResetPassword = async () => {
+    
     if (!password || password.length < 6) {
       Alert.alert("Error", "Password must be at least 6 characters.");
       return;
@@ -76,16 +120,19 @@ export default function ResetPassword() {
       );
       router.replace("/(auth)/login");
     }
+    
   };
 
   // Show a loading message until the session is initialized
-  // if (!sessionInitialized) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text>Initializing...</Text>
-  //     </View>
-  //   );
-  // }
+  if (!sessionInitialized) {
+    return (
+      <View style={styles.container}>
+        <Text>Initializing...</Text>
+      </View>
+    );
+  }
+
+  
 
   return (
     <ImageBackground
@@ -93,6 +140,7 @@ export default function ResetPassword() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
+
       <View style={styles.container}>
         <View
           style={{
@@ -156,7 +204,7 @@ export default function ResetPassword() {
               </Text>
             </TouchableOpacity>
           </View>
-
+          
           <View
             style={{
               flexDirection: "row",
@@ -211,7 +259,9 @@ export default function ResetPassword() {
               }}
             >
               <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text style={{ textDecorationLine: "underline" }}>Login</Text>
+                <Text style={{ textDecorationLine: "underline" }}>
+                  Login
+                </Text>
               </TouchableOpacity>
               {"     |    "}
               <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>

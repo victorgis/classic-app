@@ -71,22 +71,18 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <AvatarProvider>
-          <Stack>
+          {/* <Stack>
             <Stack.Screen
-              name="(home)"
+              name="(home)/homepage"
               options={{ headerShown: false, title: "HomeScreen" }}
             />
-            {/* <Stack.Screen
-              name="index"
-              options={{ headerShown: false, title: "Main" }}
-            /> */}
-            {/* <Stack.Screen
+            <Stack.Screen
               name="(auth)"
-              options={{ headerShown: false, title: "Main" }}
-            /> */}
-          </Stack>
+              options={{ headerShown: false, title: "HomeScreen" }}
+            />
+          </Stack> */}
+          <Slot />
         </AvatarProvider>
-        {/* <Slot /> */}
       </AuthProvider>
     </GestureHandlerRootView>
   );
