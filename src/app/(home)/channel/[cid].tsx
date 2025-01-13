@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   Alert,
@@ -17,6 +17,8 @@ import {
   useChatContext,
 } from "stream-chat-expo";
 import { RFValue } from "react-native-responsive-fontsize";
+import { messageActions } from "stream-chat-expo";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
@@ -72,7 +74,73 @@ export default function ChannelScreen() {
 
   return (
     <Channel channel={channel}>
-      <MessageList />
+      <MessageList
+        messageActions={(params: any) => {
+          const { dismissOverlay, message } = params;
+
+          // Default actions
+          const actions = messageActions({ ...params }) || [];
+
+          // Adding custom actions
+          actions.push(
+            {
+              action: async () => {
+                try {
+                  await client.blockUser(message.user?.id || "");
+                  console.log("Blocked successfully");
+                  dismissOverlay();
+                } catch (error) {
+                  console.error("Error blocking user:", error);
+                }
+              },
+              actionType: "block-user",
+              title: "Block User",
+              icon: <MaterialIcons size={25} name="block" />,
+            },
+            {
+              action: async () => {
+                try {
+                  const privateChannel = client.channel("messaging", {
+                    members: [message.user?.id, client.userID],
+                  });
+                  await privateChannel.watch();
+                  console.log("Private chat started:", privateChannel.id);
+                  dismissOverlay();
+
+                  // Navigate to the private chat
+                  // router.replace({
+                  //   pathname: "/(home)/channel/[cid]",
+                  //   params: { cid: privateChannel.id },
+                  // });
+
+                  // if (privateChannel.data?.blocked == true) {
+                  //   Alert.alert("Blocked User", "This user was blocked by you");
+                  //   // return (
+                  //   //   <View>
+                  //   //     <Text>Blocked user</Text>
+                  //   //   </View>
+                  //   // );
+                  // } else {
+
+                  // }
+
+                  router.replace(`/(home)/channel/${privateChannel.cid}`);
+
+                  console.log("x", privateChannel.data?.blocked);
+                } catch (error) {
+                  console.error("Error creating private chat:", error);
+                }
+              },
+              actionType: "reply-privately",
+              title: "Reply Privately",
+              icon: <MaterialIcons size={25} name="chat" />,
+            }
+          );
+
+          return actions;
+        }}
+      />
+
       <SafeAreaView edges={["bottom"]}>
         {showInput ? (
           <MessageInput />
