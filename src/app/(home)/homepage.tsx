@@ -39,7 +39,7 @@ const MainScreen = () => {
 
   const staticImg = require("../../../assets/images/no-profile-pic-icon-11.jpg");
   const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
-  const finalUrl = avatarUrl ? { uri: avatarUrl || asyncUrl } : staticImg;
+  const finalUrl = asyncUrl ? { uri: asyncUrl || staticImg } : avatarUrl;
 
   // const filterChannels = async () => {
   //   if (!query) {
