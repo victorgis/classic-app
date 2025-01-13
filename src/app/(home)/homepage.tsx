@@ -22,6 +22,7 @@ import { supabase } from "@/src/lib/supabase";
 import { useAvatar } from "@/src/providers/AvatarContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LinearGradient from "react-native-linear-gradient";
+import { useChatContext } from "stream-chat-expo";
 
 const MainScreen = () => {
   const { avatarUrl } = useAvatar();
@@ -32,10 +33,46 @@ const MainScreen = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [activeButton, setActiveButton] = useState("");
   const [asyncUrl, setAsyncUrl] = useState("");
+  const [query, setQuery] = useState("");
+  const [filteredChannels, setFilteredChannels] = useState([]);
+  const { client } = useChatContext();
 
   const staticImg = require("../../../assets/images/no-profile-pic-icon-11.jpg");
   const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
   const finalUrl = avatarUrl ? { uri: avatarUrl || asyncUrl } : staticImg;
+
+  // const filterChannels = async () => {
+  //   if (!query) {
+  //     setFilteredChannels(await client.queryChannels());
+  //     return;
+  //   }
+  //   const response = await client.queryChannels({
+  //     filter: { name: { $autocomplete: query } }, // Modify the filter condition if needed
+  //     sort: [{ last_message_at: -1 }], // Sort by last message date, for example
+  //   });
+  //   setFilteredChannels(response);
+  // };
+
+  // useEffect(() => {
+  //   filterChannels();
+  // }, [query]);
+
+  // Function to handle the search query
+  const handleSearch = (text: string) => {
+    setActiveTab("Tab2");
+    setQuery(text);
+    console.log("Searching for:", text); // Your search logic goes here
+
+    if (text == "") {
+      setShowSearch(false);
+    }
+  };
+
+  // Function to handle when "done" is pressed
+  const handleDone = () => {
+    handleSearch(query);
+    Keyboard.dismiss(); // Dismiss keyboard after "done"
+  };
 
   const loadAvatarFromStorage = async () => {
     console.log("profile", profileImg);
@@ -88,6 +125,8 @@ const MainScreen = () => {
     router.push("/(home)/screens/createInterest");
   };
 
+  console.log("filteredChannels", filteredChannels);
+
   const renderContent = () => {
     if (activeTab === "Tab1") {
       return (
@@ -98,7 +137,7 @@ const MainScreen = () => {
     } else if (activeTab === "Tab2") {
       return (
         <>
-          <AllChannelsScreen />
+          <AllChannelsScreen searchQuery={query} />
         </>
       );
     }
@@ -210,7 +249,7 @@ const MainScreen = () => {
 
       {/* Hidden search box section */}
       {showSearch && (
-        <KeyboardAvoidingView behavior="padding">
+        <KeyboardAvoidingView behavior="padding" style={{ zIndex: 3 }}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
             <View style={styles.searchMenuContainer}>
               <View style={styles.searchContainer}>
@@ -220,11 +259,15 @@ const MainScreen = () => {
                   color="#888"
                   style={styles.searchIcon}
                 />
+
                 <TextInput
                   style={styles.textInput}
                   placeholder="Search"
                   placeholderTextColor="#888"
-                  onFocus={() => setShowSearch(true)} // Ensure it doesn't dismiss when focusing
+                  value={query}
+                  onChangeText={handleSearch} // Fires search query while typing
+                  onSubmitEditing={handleDone} // Fires when "done" is pressed
+                  returnKeyType="search" // Makes sure "done" is visible as the return key
                 />
               </View>
               <MaterialIcons
@@ -358,14 +401,14 @@ const styles = StyleSheet.create({
     right: RFValue(20),
     bottom: RFValue(70),
     width: RFValue(60),
-    zIndex: 100,
+    zIndex: 1,
   },
   options: {
     position: "absolute",
     right: RFValue(0),
     top: RFValue(40),
     backgroundColor: "#fff",
-    zIndex: 2,
+    zIndex: 1,
     borderColor: "#262626",
     // padding: RFValue(15),
     paddingVertical: RFValue(8),

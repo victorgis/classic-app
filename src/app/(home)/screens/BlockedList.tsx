@@ -16,17 +16,17 @@ export default function BlockedList() {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const { user } = useAuth();
 
-  useEffect(() => {
-    // console.log(user.id)
-    const blockUser = async (userId: string) => {
-      try {
-        await client.blockUser(userId);
-      } catch (err) {
-        console.log("Error blocking user:", err);
-      }
-    };
-    blockUser("c8b9db33-c7ad-4f5c-ab78-15d832493a00");
-  }, []);
+  // useEffect(() => {
+  //   // console.log(user.id)
+  //   const blockUser = async (userId: string) => {
+  //     try {
+  //       await client.blockUser(userId);
+  //     } catch (err) {
+  //       console.log("Error blocking user:", err);
+  //     }
+  //   };
+  //   blockUser("c8b9db33-c7ad-4f5c-ab78-15d832493a00");
+  // }, []);
 
   useEffect(() => {
     const getBlockedUsers = async () => {
