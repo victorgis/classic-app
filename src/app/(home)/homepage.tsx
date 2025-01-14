@@ -23,6 +23,7 @@ import { useAvatar } from "@/src/providers/AvatarContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LinearGradient from "react-native-linear-gradient";
 import { useChatContext } from "stream-chat-expo";
+import { checkAndPromptForRating } from "@/src/utils/feedbackProvider";
 
 const MainScreen = () => {
   const { avatarUrl } = useAvatar();
@@ -41,21 +42,9 @@ const MainScreen = () => {
   const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
   const finalUrl = asyncUrl ? { uri: asyncUrl || staticImg } : avatarUrl;
 
-  // const filterChannels = async () => {
-  //   if (!query) {
-  //     setFilteredChannels(await client.queryChannels());
-  //     return;
-  //   }
-  //   const response = await client.queryChannels({
-  //     filter: { name: { $autocomplete: query } }, // Modify the filter condition if needed
-  //     sort: [{ last_message_at: -1 }], // Sort by last message date, for example
-  //   });
-  //   setFilteredChannels(response);
-  // };
-
-  // useEffect(() => {
-  //   filterChannels();
-  // }, [query]);
+  useEffect(() => {
+    checkAndPromptForRating();
+  }, []);
 
   // Function to handle the search query
   const handleSearch = (text: string) => {
@@ -124,8 +113,6 @@ const MainScreen = () => {
   const createInterestFx = () => {
     router.push("/(home)/screens/createInterest");
   };
-
-  console.log("filteredChannels", filteredChannels);
 
   const renderContent = () => {
     if (activeTab === "Tab1") {
