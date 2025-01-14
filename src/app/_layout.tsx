@@ -39,7 +39,7 @@ export default function RootLayout() {
       console.log("Extracted Params:", params); // Log extracted params
 
       if (params?.type === "recovery" && params?.access_token) {
-        console.log("Param is recovery")
+        console.log("Param is recovery");
         router.replace(
           `/resetPassword?access_token=${params.access_token}&refresh_token=${params.refresh_token}`
         );
@@ -48,13 +48,10 @@ export default function RootLayout() {
         router.replace(
           `/login?access_token=${params.access_token}&refresh_token=${params.refresh_token}`
         );
-      } 
-      else {
+      } else {
         console.log("Missing or invalid token:", params);
       }
-      
     };
-
 
     // Add an event listener for deep links
     const subscription = Linking.addEventListener("url", handleDeepLink);

@@ -12,38 +12,43 @@ import { Channel as ChannelList } from "stream-chat";
 import { useAuth } from "@/src/providers/AuthProvider";
 import {
   Channel,
-  Thread,
   MessageList,
   MessageInput,
   useChatContext,
-} from "stream-chat-expo";
-import { RFValue } from "react-native-responsive-fontsize";
-import {
   // messageActions,
   MessageActionListItem,
   useMessageContext,
+  Avatar,
 } from "stream-chat-expo";
+import { RFValue } from "react-native-responsive-fontsize";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "expo-router";
 
 export default function ChannelScreen() {
+  const [chatName, setChatName] = useState("");
   const [channel, setChannel] = useState<ChannelList | null>(null);
   const { cid } = useLocalSearchParams<{ cid: string }>();
   const { client } = useChatContext();
   const { user } = useAuth();
   const [showInput, setShowInput] = useState(false);
-  const [selectedThreadMessage, setSelectedThreadMessage] = useState();
+  const navigation = useNavigation();
+  navigation.setOptions({ title: chatName || "" });
 
   useEffect(() => {
     const fetchChannel = async () => {
       const channels = await client.queryChannels({ cid });
       const channel = channels[0];
       const myID = user.id;
-      // console.log("channels", channels[0]);
-      // console.log("myID", myID);
+      const membIds = Object.values(channel.state.members);
 
-      const members = channel.state;
+      setChatName(channel?.data?.name || membIds[0].user?.name);
 
-      console.log("channellA", members);
+      console.log("user", membIds[0].user?.name);
+
+      // const v = navigation.setOptions({ title: channel?.data?.name });
+      // console.log("v", v);
+
+      // console.log("channellA", members);
 
       const memberIds = Object.keys(channel.state.members);
       // const membersDetails = Object.values(channel.state.members);
@@ -78,104 +83,9 @@ export default function ChannelScreen() {
     }
   };
 
-  const CustomMessageActionList = () => {
-    const { dismissOverlay, message } = useMessageContext(); // Access the current message context
-    const { client } = useChatContext(); // Access the Stream Chat client
-
-    const handleThreadReply = () => {
-      console.log("Reply to thread:", message);
-      // Logic to handle thread replies
-      Alert.alert("Thread Reply", "Thread reply clicked.");
-      dismissOverlay();
-    };
-
-    const handleBlockUser = async () => {
-      try {
-        if (!message.user?.id) return;
-        await client.blockUser(message.user.id);
-        console.log("Blocked user successfully:", message.user.id);
-        Alert.alert("Success", `${message.user.id} has been blocked.`);
-      } catch (error) {
-        console.error("Error blocking user:", error);
-        Alert.alert("Error", "Failed to block user.");
-      } finally {
-        dismissOverlay();
-      }
-    };
-
-    const handleReportUser = () => {
-      console.log("Reported user:", message.user?.id);
-      // Logic for reporting a user (e.g., sending an alert to moderators)
-      Alert.alert("Report User", "User has been reported.");
-      dismissOverlay();
-    };
-
-    const handleSaveMessage = async () => {
-      try {
-        if (!message.id) return;
-        const reactionType = "saved"; // Custom reaction for saved messages
-        await client.reactions.add(message.id, { type: reactionType });
-        console.log("Message saved successfully:", message.id);
-        Alert.alert("Success", "Message saved.");
-      } catch (error) {
-        console.error("Error saving message:", error);
-        Alert.alert("Error", "Failed to save message.");
-      } finally {
-        dismissOverlay();
-      }
-    };
-
-    // Message actions
-    const messageActions = [
-      {
-        action: handleThreadReply,
-        actionType: "replyToThread",
-        title: "Reply to Thread",
-      },
-      {
-        action: handleBlockUser,
-        actionType: "blockUser",
-        title: "Block User",
-      },
-      {
-        action: handleReportUser,
-        actionType: "reportUser",
-        title: "Report User",
-      },
-      {
-        action: handleSaveMessage,
-        actionType: "saveMessage",
-        title: "Save Message",
-      },
-    ];
-
-    return (
-      <View style={{ backgroundColor: "white" }}>
-        {messageActions.map(({ actionType, ...rest }) => (
-          <MessageActionListItem
-            actionType={actionType}
-            key={actionType}
-            {...rest}
-          />
-        ))}
-      </View>
-    );
-  };
-
-
   return (
-    <Channel
-      channel={channel}
-      thread={selectedThreadMessage} // Set the currently selected thread message
-      threadList={Boolean(selectedThreadMessage)} // Enable thread mode if a thread is selected
-      MessageActionList={CustomMessageActionList}
-    >
-      <MessageList
-        onThreadSelect={(message) => {
-          console.log("Selected thread message:", message);
-          setSelectedThreadMessage(message); // Set the selected thread message to state
-        }}
-      />
+    <Channel channel={channel}>
+      <MessageList />
 
       <SafeAreaView edges={["bottom"]}>
         {showInput ? (

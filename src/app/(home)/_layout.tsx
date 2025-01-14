@@ -17,9 +17,14 @@ const HomeLayout: React.FC = () => {
     <SafeAreaWrapper>
       <ChatProvider>
         <Stack>
-          
           <Stack.Screen
             name="homepage"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="channel"
             options={{
               headerShown: false,
             }}
