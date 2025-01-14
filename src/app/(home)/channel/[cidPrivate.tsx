@@ -48,7 +48,6 @@ export default function ChannelScreen() {
       const memberIds = Object.keys(channel.state.members);
       // const membersDetails = Object.values(channel.state.members);
       console.log("memberIds", memberIds);
-      // console.log("membersDetails", membersDetails);
 
       if (memberIds.includes(myID)) {
         console.log(`${myID} is in the interestArray`);
@@ -162,13 +161,12 @@ export default function ChannelScreen() {
     );
   };
 
-
   return (
     <Channel
       channel={channel}
       thread={selectedThreadMessage} // Set the currently selected thread message
       threadList={Boolean(selectedThreadMessage)} // Enable thread mode if a thread is selected
-      MessageActionList={CustomMessageActionList}
+      // MessageActionList={CustomMessageActionList}
     >
       <MessageList
         onThreadSelect={(message) => {
