@@ -12,6 +12,7 @@ import { Channel as ChannelList } from "stream-chat";
 import { useAuth } from "@/src/providers/AuthProvider";
 import {
   Channel,
+  Thread,
   MessageList,
   MessageInput,
   useChatContext,
@@ -30,6 +31,7 @@ export default function ChannelScreen() {
   const { client } = useChatContext();
   const { user } = useAuth();
   const [showInput, setShowInput] = useState(false);
+  const [selectedThreadMessage, setSelectedThreadMessage] = useState();
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -77,25 +79,76 @@ export default function ChannelScreen() {
   };
 
   const CustomMessageActionList = () => {
-    const { dismissOverlay } = useMessageContext();
+    const { dismissOverlay, message } = useMessageContext(); // Access the current message context
+    const { client } = useChatContext(); // Access the Stream Chat client
+
+    const handleThreadReply = () => {
+      console.log("Reply to thread:", message);
+      // Logic to handle thread replies
+      Alert.alert("Thread Reply", "Thread reply clicked.");
+      dismissOverlay();
+    };
+
+    const handleBlockUser = async () => {
+      try {
+        if (!message.user?.id) return;
+        await client.blockUser(message.user.id);
+        console.log("Blocked user successfully:", message.user.id);
+        Alert.alert("Success", `${message.user.id} has been blocked.`);
+      } catch (error) {
+        console.error("Error blocking user:", error);
+        Alert.alert("Error", "Failed to block user.");
+      } finally {
+        dismissOverlay();
+      }
+    };
+
+    const handleReportUser = () => {
+      console.log("Reported user:", message.user?.id);
+      // Logic for reporting a user (e.g., sending an alert to moderators)
+      Alert.alert("Report User", "User has been reported.");
+      dismissOverlay();
+    };
+
+    const handleSaveMessage = async () => {
+      try {
+        if (!message.id) return;
+        const reactionType = "saved"; // Custom reaction for saved messages
+        await client.reactions.add(message.id, { type: reactionType });
+        console.log("Message saved successfully:", message.id);
+        Alert.alert("Success", "Message saved.");
+      } catch (error) {
+        console.error("Error saving message:", error);
+        Alert.alert("Error", "Failed to save message.");
+      } finally {
+        dismissOverlay();
+      }
+    };
+
+    // Message actions
     const messageActions = [
       {
-        action: function () {
-          Alert.alert("Edit Message action called.");
-          dismissOverlay();
-        },
-        actionType: "editMessage",
-        title: "Edit messagee",
+        action: handleThreadReply,
+        actionType: "replyToThread",
+        title: "Reply to Thread",
       },
       {
-        action: function () {
-          Alert.alert("Delete message action");
-          dismissOverlay();
-        },
-        actionType: "deleteMessage",
-        title: "Delete Message",
+        action: handleBlockUser,
+        actionType: "blockUser",
+        title: "Block User",
+      },
+      {
+        action: handleReportUser,
+        actionType: "reportUser",
+        title: "Report User",
+      },
+      {
+        action: handleSaveMessage,
+        actionType: "saveMessage",
+        title: "Save Message",
       },
     ];
+
     return (
       <View style={{ backgroundColor: "white" }}>
         {messageActions.map(({ actionType, ...rest }) => (
@@ -109,13 +162,20 @@ export default function ChannelScreen() {
     );
   };
 
+
   return (
     <Channel
       channel={channel}
-      MessageActionList={CustomMessageActionList}
-      
+      thread={selectedThreadMessage} // Set the currently selected thread message
+      threadList={Boolean(selectedThreadMessage)} // Enable thread mode if a thread is selected
+      // MessageActionList={CustomMessageActionList}
     >
-      <MessageList />
+      <MessageList
+        onThreadSelect={(message) => {
+          console.log("Selected thread message:", message);
+          setSelectedThreadMessage(message); // Set the selected thread message to state
+        }}
+      />
 
       <SafeAreaView edges={["bottom"]}>
         {showInput ? (

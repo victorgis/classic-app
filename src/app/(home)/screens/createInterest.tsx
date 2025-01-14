@@ -52,6 +52,7 @@ export default function CreateInterestScreen() {
         image: interestImg,
         watch: true, // this is the default
         state: true,
+        max_members: 256,
       });
       await newChannel.watch();
 
