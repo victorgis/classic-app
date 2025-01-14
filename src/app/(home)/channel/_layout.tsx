@@ -6,7 +6,7 @@ export default function ChannelStack() {
       <Stack.Screen
         name="[cid]"
         options={{
-          headerShown: true,
+          headerShown: false,
           headerTitleAlign: "center", // Center the header title horizontally
         }}
       />
