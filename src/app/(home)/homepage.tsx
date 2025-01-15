@@ -40,7 +40,7 @@ const MainScreen = () => {
 
   const staticImg = require("../../../assets/images/no-profile-pic-icon-11.jpg");
   const profileImg = `https://xqcfakcvarfbtfngawsd.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`;
-  const finalUrl = asyncUrl ? { uri: asyncUrl || staticImg } : avatarUrl;
+  const finalUrl = profileImg ? { uri: profileImg || asyncUrl } : staticImg;
 
   useEffect(() => {
     checkAndPromptForRating();
@@ -107,6 +107,7 @@ const MainScreen = () => {
 
   const logoutFX = async () => {
     setActiveButton("logout");
+    await AsyncStorage.clear();
     await supabase.auth.signOut();
   };
 

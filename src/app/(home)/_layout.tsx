@@ -42,6 +42,10 @@ const HomeLayout: React.FC = () => {
             options={{ headerShown: true, title: "Notification" }}
           />
           <Stack.Screen
+            name="screens/PinnedMessages"
+            options={{ headerShown: true, title: "Pinned Messages" }}
+          />
+          <Stack.Screen
             name="screens/notificationSettings"
             options={{ headerShown: true, title: "Manage Notification" }}
           />
