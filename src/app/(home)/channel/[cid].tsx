@@ -24,10 +24,13 @@ import {
   ThemeProvider,
 } from "stream-chat-expo";
 import { RFValue } from "react-native-responsive-fontsize";
-import CryptoJS from "react-native-crypto-js";
+
+import { supabase } from "@/src/lib/supabase";
 
 import CustomInput from "@/src/component/CustomInput";
 import ChatTopBar from "@/src/component/ChatTopBar";
+import { MaterialIcons } from "@expo/vector-icons";
+import { decryptMessage } from "@/src/utils/decryptText";
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
@@ -37,19 +40,7 @@ export default function ChannelScreen() {
   const [showInput, setShowInput] = useState(false);
   const [userPresence, setUserPresence] = useState("");
   const [showChatOptions, setShowChatOptions] = useState(false);
-
-  const encryptionKey = "shared-secret-key";
-
-  const decryptMessage = (encryptedText: any) => {
-    try {
-      const bytes = CryptoJS.AES.decrypt(encryptedText, encryptionKey);
-      const originalText = bytes.toString(CryptoJS.enc.Utf8);
-      return originalText || encryptedText; // Return original text if decryption is successful, else fallback to encrypted text
-    } catch (error) {
-      console.error("Error decrypting message:", error);
-      return encryptedText; // Fallback in case of an error
-    }
-  };
+  const [thread, setThread] = useState(null);
 
   useEffect(() => {
     // handleSendMessage("Good morning");
@@ -127,11 +118,89 @@ export default function ChannelScreen() {
 
       <Channel
         channel={channel}
+        thread={thread}
         MessageText={CustomMessageComponent}
-        Input={CustomInput}
-        // thread={thread}
+        // Input={CustomInput}
+
+        messageActions={(params) => {
+          const { dismissOverlay, message } = params;
+
+          // Default actions
+          const actions = messageActions({ ...params }) || [];
+
+          // Adding custom actions
+          actions.push(
+            {
+              action: async () => {
+                try {
+                  const privateChannel = client.channel("messaging", {
+                    members: [message.user?.id, client.userID],
+                  });
+                  await privateChannel.watch();
+                  console.log("Private chat started:", privateChannel.id);
+                  dismissOverlay();
+
+                  // Navigate to the private chat
+                  router.replace({
+                    pathname: "/(home)/channel/[cid]",
+                    params: { cid: privateChannel.id },
+                  });
+                  router.replace(`/(home)/channel/${privateChannel.cid}`);
+
+                  // console.log("x", privateChannel.data?.blocked);
+                } catch (error) {
+                  console.error("Error creating private chat:", error);
+                }
+              },
+              actionType: "reply-privately",
+              title: "Reply Privately",
+              icon: <MaterialIcons size={25} name="chat" />,
+            },
+            {
+              action: async () => {
+                try {
+                  const userId = client.userID;
+                  const messageId = message.id;
+                  const messageText = message.text;
+                  const senderId = message.user?.id;
+
+                  if (!userId || !messageId || !messageText || !senderId) {
+                    console.error("Missing required fields for saving message");
+                    return;
+                  }
+
+                  // Save to Supabase
+                  const { data, error } = await supabase
+                    .from("saved_messages")
+                    .insert([
+                      {
+                        message: messageText,
+                        created_at: new Date().toISOString(), // Fix the function call
+                        user_id: userId,
+                      },
+                    ]);
+
+                  if (error) {
+                    console.error("Error saving message:", error.message);
+                  } else {
+                    Alert.alert("Message saved successfully:");
+                  }
+
+                  dismissOverlay();
+                } catch (error) {
+                  console.error("Error saving message:", error);
+                }
+              },
+              actionType: "save-message",
+              title: "Save Message",
+              icon: <MaterialIcons size={25} name="bookmark" />,
+            }
+          );
+
+          return actions;
+        }}
       >
-        <MessageList />
+        <MessageList onThreadSelect={(message) => setThread(message)} />
 
         <SafeAreaView edges={["bottom"]} style={{ marginBottom: RFValue(58) }}>
           {showInput ? (

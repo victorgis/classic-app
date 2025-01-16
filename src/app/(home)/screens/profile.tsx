@@ -37,6 +37,10 @@ export default function ProfileScreen() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [userPinnedObjects, setUserPinnedObjects] = useState([]);
+  const [message, setMessage] = useState("");
+  const [created_at, setCreated_at] = useState();
+  const [savedMessages, setSavedMessages] = useState<any>();
+
   // const [userId, setUserId] = useState("");
   // setUserId(user?.id);
 
@@ -87,10 +91,7 @@ export default function ProfileScreen() {
     };
 
     fetchPinnedMessagesAcrossAllChannels();
-
-    console.log("userPinnedObjects", userPinnedObjects);
   }, []);
-
 
   async function getProfile() {
     try {
@@ -110,7 +111,7 @@ export default function ProfileScreen() {
         setUsername(data.username);
         setWebsite(data.website);
         setAvatarUrl(data.avatar_url);
-        setFullName(anonName);
+        setFullName(data.full_name);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -120,6 +121,42 @@ export default function ProfileScreen() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    async function getSavedMessages() {
+      try {
+        setLoading(true);
+        if (!session?.user) throw new Error("No user on the session!");
+
+        const { data, error, status } = await supabase
+          .from("saved_messages")
+          .select(`message, created_at, user_id, id`)
+          .eq("user_id", session?.user.id); // ✅ Correct column filter
+
+        if (error && status !== 406) {
+          throw error;
+        }
+
+        console.log("userSaved", data, error, status);
+
+        // If data is returned, set state
+        if (data) {
+          setSavedMessages(data); // Assuming you have a setSavedMessages state
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert("Error", error.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getSavedMessages();
+  }, []);
+
+
+  console.log("savedMessages", savedMessages);
 
   async function updateProfile({
     username,
@@ -303,6 +340,20 @@ export default function ProfileScreen() {
           <View style={styles.option}>
             <Ionicons name="pin-sharp" size={24} color="#555" />
             <Text style={styles.optionText}>Pinned Messages</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/(home)/screens/SavedMessages",
+              params: { data: JSON.stringify(savedMessages) }, // Pass data as string
+            })
+          }
+        >
+          <View style={styles.option}>
+            <Ionicons name="save" size={24} color="#555" />
+            <Text style={styles.optionText}>Saved Messages</Text>
           </View>
         </TouchableOpacity>
 

@@ -40,31 +40,67 @@ const HomeLayout: React.FC = () => {
           />
           <Stack.Screen
             name="screens/notifications"
-            options={{ headerShown: true, title: "Notification" }}
+            options={{
+              headerShown: true,
+              title: "Notification",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/PinnedMessages"
-            options={{ headerShown: true, title: "Pinned Messages" }}
+            options={{
+              headerShown: true,
+              title: "Pinned Messages",
+              headerBackTitle: "back",
+            }}
+          />
+          <Stack.Screen
+            name="screens/SavedMessages"
+            options={{
+              headerShown: true,
+              title: "Saved Messages",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/notificationSettings"
-            options={{ headerShown: true, title: "Manage Notification" }}
+            options={{
+              headerShown: true,
+              title: "Manage Notification",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/changePassword"
-            options={{ headerShown: true, title: "Change Password" }}
+            options={{
+              headerShown: true,
+              title: "Change Password",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/privacypolicy"
-            options={{ headerShown: true, title: "Privacy Policy" }}
+            options={{
+              headerShown: true,
+              title: "Privacy Policy",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/ModeratorInInterest"
-            options={{ headerShown: true, title: "Moderator in interest" }}
+            options={{
+              headerShown: true,
+              title: "Moderator in interest",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/BlockedList"
-            options={{ headerShown: true, title: "Blocked List" }}
+            options={{
+              headerShown: true,
+              title: "Blocked List",
+              headerBackTitle: "back",
+            }}
           />
           <Stack.Screen
             name="screens/termscondition"
