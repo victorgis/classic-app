@@ -28,6 +28,7 @@ const HomeLayout: React.FC = () => {
             options={{
               headerShown: false,
             }}
+            // initialParams={{ cid: channelId }} // Pass the CID here
           />
           <Stack.Screen
             name="screens/profile"
