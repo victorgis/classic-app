@@ -9,6 +9,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AvatarProvider } from "../providers/AvatarContext";
 import { Alert } from "react-native";
 import * as Linking from "expo-linking";
+import { AppProvider } from "../providers/AppContext";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -68,40 +69,42 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        <AvatarProvider>
-          <Stack>
-            <Stack.Screen
-              name="index"
-              options={{ headerShown: false, title: "HomeScreen" }}
-            />
-
-            <Stack.Screen
-              name="(auth)/login"
-              options={{ headerShown: false, title: "Login" }}
-            />
-            <Stack.Screen
-              name="(auth)/signup"
-              options={{ headerShown: false, title: "Signup" }}
-            />
-            <Stack.Screen
-              name="(auth)/forgottenPassword"
-              options={{ headerShown: false, title: "Forgotten Password" }}
-            />
-            <Stack.Screen
-              name="(auth)/resetPassword"
-              options={{ headerShown: false, title: "Reset Password" }}
-            />
-            <Stack.Screen
-              name="(auth)/enterResetToken"
-              options={{ headerShown: false, title: "Waiting Page" }}
-            />
-            <Stack.Screen
-              name="(home)"
-              options={{ headerShown: false, title: "Home Page" }}
-            />
-          </Stack>
-        </AvatarProvider>
-        {/* <Slot /> */}
+        <AppProvider>
+          {" "}
+          {/* Corrected from AppContext to AppProvider */}
+          <AvatarProvider>
+            <Stack>
+              <Stack.Screen
+                name="index"
+                options={{ headerShown: false, title: "HomeScreen" }}
+              />
+              <Stack.Screen
+                name="(auth)/login"
+                options={{ headerShown: false, title: "Login" }}
+              />
+              <Stack.Screen
+                name="(auth)/signup"
+                options={{ headerShown: false, title: "Signup" }}
+              />
+              <Stack.Screen
+                name="(auth)/forgottenPassword"
+                options={{ headerShown: false, title: "Forgotten Password" }}
+              />
+              <Stack.Screen
+                name="(auth)/resetPassword"
+                options={{ headerShown: false, title: "Reset Password" }}
+              />
+              <Stack.Screen
+                name="(auth)/enterResetToken"
+                options={{ headerShown: false, title: "Waiting Page" }}
+              />
+              <Stack.Screen
+                name="(home)"
+                options={{ headerShown: false, title: "Home Page" }}
+              />
+            </Stack>
+          </AvatarProvider>
+        </AppProvider>
       </AuthProvider>
     </GestureHandlerRootView>
   );

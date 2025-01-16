@@ -31,6 +31,7 @@ import CustomInput from "@/src/component/CustomInput";
 import ChatTopBar from "@/src/component/ChatTopBar";
 import { MaterialIcons } from "@expo/vector-icons";
 import { decryptMessage } from "@/src/utils/decryptText";
+import { useAppContext } from "@/src/providers/AppContext";
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
@@ -40,7 +41,7 @@ export default function ChannelScreen() {
   const [showInput, setShowInput] = useState(false);
   const [userPresence, setUserPresence] = useState("");
   const [showChatOptions, setShowChatOptions] = useState(false);
-  const [thread, setThread] = useState(null);
+  const { setThread, setChannelT } = useAppContext();
 
   useEffect(() => {
     // handleSendMessage("Good morning");
@@ -71,6 +72,7 @@ export default function ChannelScreen() {
       }
 
       setChannel(channels[0]);
+      setChannelT(channels[0]);
     };
     fetchChannel();
   }, [cid]);
@@ -118,19 +120,26 @@ export default function ChannelScreen() {
 
       <Channel
         channel={channel}
-        thread={thread}
-        MessageText={CustomMessageComponent}
+        // MessageText={CustomMessageComponent}
         // Input={CustomInput}
 
         messageActions={(params) => {
           const { dismissOverlay, message } = params;
 
-          // Default actions
-          const actions = messageActions({ ...params }) || [];
+          // Default actions (filter out "Mark as Unread")
+          let actions = messageActions({ ...params });
 
-          // Adding custom actions
-          actions.push(
-            {
+          // User ID (current user)
+          const userId = client.userID;
+          const senderId = message.user?.id;
+          const messageText = message.text;
+
+          // Custom Actions Array
+          const customActions = [];
+
+          // Show "Reply Privately" only if the message is from someone else
+          if (userId !== senderId) {
+            customActions.push({
               action: async () => {
                 try {
                   const privateChannel = client.channel("messaging", {
@@ -146,8 +155,6 @@ export default function ChannelScreen() {
                     params: { cid: privateChannel.id },
                   });
                   router.replace(`/(home)/channel/${privateChannel.cid}`);
-
-                  // console.log("x", privateChannel.data?.blocked);
                 } catch (error) {
                   console.error("Error creating private chat:", error);
                 }
@@ -155,27 +162,26 @@ export default function ChannelScreen() {
               actionType: "reply-privately",
               title: "Reply Privately",
               icon: <MaterialIcons size={25} name="chat" />,
-            },
-            {
+            });
+          }
+
+          // Show "Save Message" only if the message is not empty
+          if (messageText) {
+            customActions.push({
               action: async () => {
                 try {
-                  const userId = client.userID;
-                  const messageId = message.id;
-                  const messageText = message.text;
-                  const senderId = message.user?.id;
-
-                  if (!userId || !messageId || !messageText || !senderId) {
+                  if (!userId || !messageText) {
                     console.error("Missing required fields for saving message");
                     return;
                   }
 
                   // Save to Supabase
-                  const { data, error } = await supabase
+                  const { error } = await supabase
                     .from("saved_messages")
                     .insert([
                       {
                         message: messageText,
-                        created_at: new Date().toISOString(), // Fix the function call
+                        created_at: new Date().toISOString(),
                         user_id: userId,
                       },
                     ]);
@@ -183,7 +189,7 @@ export default function ChannelScreen() {
                   if (error) {
                     console.error("Error saving message:", error.message);
                   } else {
-                    Alert.alert("Message saved successfully:");
+                    Alert.alert("Success", "Message saved successfully.");
                   }
 
                   dismissOverlay();
@@ -194,13 +200,22 @@ export default function ChannelScreen() {
               actionType: "save-message",
               title: "Save Message",
               icon: <MaterialIcons size={25} name="bookmark" />,
-            }
-          );
+            });
+          }
 
-          return actions;
+          // Merge default and custom actions
+          return [...actions, ...customActions];
         }}
       >
-        <MessageList onThreadSelect={(message) => setThread(message)} />
+        <MessageList
+          onThreadSelect={(message) => {
+            console.log("message", message);
+            if (channel?.id) {
+              setThread(message);
+              router.push("/screens/ThreadScreen");
+            }
+          }}
+        />
 
         <SafeAreaView edges={["bottom"]} style={{ marginBottom: RFValue(58) }}>
           {showInput ? (

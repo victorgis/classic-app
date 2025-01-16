@@ -79,6 +79,14 @@ const HomeLayout: React.FC = () => {
             }}
           />
           <Stack.Screen
+            name="screens/ThreadScreen"
+            options={{
+              headerShown: true,
+              title: "Thread",
+              headerBackTitle: "back",
+            }}
+          />
+          <Stack.Screen
             name="screens/privacypolicy"
             options={{
               headerShown: true,
