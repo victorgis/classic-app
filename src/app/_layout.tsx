@@ -15,18 +15,6 @@ export default function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    const run = async () => {
-      if (Platform.OS === "android") {
-        await PermissionsAndroid.requestMultiple([
-          "android.permission.POST_NOTIFICATIONS",
-          "android.permission.BLUETOOTH_CONNECT",
-        ]);
-      }
-    };
-    run();
-  }, []);
-
-  useEffect(() => {
     // Function to handle incoming URLs
     const extractFragmentParams = (url: string) => {
       const fragment = url.split("#")[1] || "";

@@ -42,8 +42,6 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
       setClauseName(clause1);
       setClauseName2(clause2);
 
-      
-
       // console.log("channels", channel.created_by?.name);
 
       setChatName(channel?.data?.name || membIds[0].user?.name);
@@ -96,7 +94,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
   };
 
   return (
-    <>
+    <View>
       <View
         style={{
           flexDirection: "row",
@@ -106,7 +104,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
           height: RFValue(55),
           borderBottomWidth: 1,
           borderColor: "#ccc",
-          backgroundColor: "#fff"
+          backgroundColor: "#fff",
         }}
       >
         {/* Left Icon */}
@@ -143,11 +141,10 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
                 borderRadius: RFPercentage(50), // Make the image circular
                 borderWidth: RFValue(1),
                 marginRight: RFValue(8), // Add space between image and text
-                borderColor: userPresence == "online" ? "green" : "grey"
+                borderColor: userPresence == "online" ? "green" : "grey",
               }}
             />
             <View>
-              {" "}
               <Text style={{ fontSize: 15 }}>{chatName}</Text>
               {!clauseName && (
                 <View
@@ -219,7 +216,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
           )}
         </View>
       )}
-    </>
+    </View>
   );
 };
 export default ChatTopBar;
