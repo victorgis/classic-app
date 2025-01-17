@@ -17,7 +17,7 @@ const HomeLayout: React.FC = () => {
   return (
     <SafeAreaWrapper>
       <ChatProvider>
-        <NotificationsProvider>
+        {/* <NotificationsProvider> */}
           <Stack>
             <Stack.Screen
               name="homepage"
@@ -147,7 +147,7 @@ const HomeLayout: React.FC = () => {
             />
           </Stack>
           {/* <Slot /> */}
-        </NotificationsProvider>
+        {/* </NotificationsProvider> */}
       </ChatProvider>
     </SafeAreaWrapper>
   );

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876894159980",
+    "project_id": "classicapp-76d37",
+    "storage_bucket": "classicapp-76d37.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876894159980:android:93bdf5aba1e49950e34449",
+        "android_client_info": {
+          "package_name": "com.victorgis.classicapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-5JOqNQq-G0Tuulr5SX1g7yhakq9r5Cc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

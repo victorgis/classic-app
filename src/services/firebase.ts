@@ -17,9 +17,9 @@ const appFirebase = initializeApp(firebaseConfig);
 
 
 
-const firebaseApp = getApp();
+// const firebaseApp = getApp();
 
-console.log("firebaseApp", firebaseApp)
+// console.log("firebaseApp", firebaseApp)
 
 
 

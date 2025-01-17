@@ -37,8 +37,13 @@
       [
         "expo-build-properties",
         {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "35.0.0"
+          },
           "ios": {
-            "useFrameworks": "static"
+            "deploymentTarget": "15.1"
           }
         }
       ],
@@ -75,10 +80,8 @@
           "photosPermission": "$(classic-app) would like access to your photo gallery to share image in a message.",
           "savePhotosPermission": "$(classic-app) would like to save photos to your photo gallery after downloading from a message."
         }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging",
-      "@react-native-firebase/crashlytics"
+      ]
+ 
     ],
     "experiments": {
       "typedRoutes": true
