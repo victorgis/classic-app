@@ -168,7 +168,6 @@ export default function Login() {
                     size={24}
                     color="black"
                   />
-                  {"  "}
                   <Text
                     style={[
                       { color: "#555", fontSize: RFValue(12) },

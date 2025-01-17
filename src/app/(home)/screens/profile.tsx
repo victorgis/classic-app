@@ -51,8 +51,9 @@ export default function ProfileScreen() {
 
     (async () => {
       const userName = await getOrGenerateUniqueName();
-      setAnonName(userName);
-      console.log("Unique User Name:", userName, fullName);
+      const permName = fullName ? fullName : userName;
+      setAnonName(permName);
+      console.log("Unique User Name:", anonName, fullName);
     })();
   }, [session]);
 
@@ -239,7 +240,6 @@ export default function ProfileScreen() {
             onUpload={(url: string) => {
               // console.log("uploadImage", url);
               setAvatarUrl(url);
-              setFullName(anonName);
               saveAvatarToStorage(url); // Save the avatar URL to AsyncStorage
 
               updateProfile({
@@ -254,7 +254,7 @@ export default function ProfileScreen() {
         <View style={styles.verticallySpaced}>
           <Input
             label="Display name"
-            value={fullName || anonName}
+            value={fullName}
             // onChangeText={(text) => setFullName(text)}
             editable={isEditing}
             ref={fullNameInputRef}
@@ -273,7 +273,7 @@ export default function ProfileScreen() {
                 username,
                 website,
                 avatar_url: avatarUrl,
-                full_name: anonName,
+                full_name: fullName,
               })
             }
             returnKeyType="done"

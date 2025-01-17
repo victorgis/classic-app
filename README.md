@@ -59,3 +59,7 @@ cp ./supabase/.env.local ./supabase/.env
 npx supabase secrets set --env-file ./supabase/.env
 npx supabase secrets list
 npx supabase functions deploy
+
+eas build -p android --profile preview
+eas build -p android --profile development
+eas build --profile development --platform android

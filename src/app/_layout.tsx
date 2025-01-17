@@ -70,7 +70,6 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <AppProvider>
-          {" "}
           {/* Corrected from AppContext to AppProvider */}
           <AvatarProvider>
             <Stack>

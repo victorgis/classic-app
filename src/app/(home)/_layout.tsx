@@ -5,6 +5,7 @@ import { useAuth } from "@/src/providers/AuthProvider";
 import SafeAreaWrapper from "@/src/hook/SafeAreaWrapper";
 import CustomHeader from "@/src/component/CustomHeader";
 import { MaterialIcons } from "@expo/vector-icons";
+import NotificationsProvider from "@/src/providers/NotificationsProvider";
 
 const HomeLayout: React.FC = () => {
   const { user } = useAuth();
@@ -16,135 +17,137 @@ const HomeLayout: React.FC = () => {
   return (
     <SafeAreaWrapper>
       <ChatProvider>
-        <Stack>
-          <Stack.Screen
-            name="homepage"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="channel"
-            options={{
-              headerShown: false,
-            }}
-            // initialParams={{ cid: channelId }} // Pass the CID here
-          />
-          <Stack.Screen
-            name="screens/profile"
-            options={{
-              headerShown: true,
-              title: "Profile",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/notifications"
-            options={{
-              headerShown: true,
-              title: "Notification",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/PinnedMessages"
-            options={{
-              headerShown: true,
-              title: "Pinned Messages",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/SavedMessages"
-            options={{
-              headerShown: true,
-              title: "Saved Messages",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/notificationSettings"
-            options={{
-              headerShown: true,
-              title: "Manage Notification",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/changePassword"
-            options={{
-              headerShown: true,
-              title: "Change Password",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/ThreadScreen"
-            options={{
-              headerShown: true,
-              title: "Thread",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/privacypolicy"
-            options={{
-              headerShown: true,
-              title: "Privacy Policy",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/ModeratorInInterest"
-            options={{
-              headerShown: true,
-              title: "Moderator in interest",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/BlockedList"
-            options={{
-              headerShown: true,
-              title: "Blocked List",
-              headerBackTitle: "back",
-            }}
-          />
-          <Stack.Screen
-            name="screens/termscondition"
-            options={{
-              headerShown: true,
-              title: "Terms & Conditions",
-              headerBackTitle: "back",
-            }}
-          />
+        <NotificationsProvider>
+          <Stack>
+            <Stack.Screen
+              name="homepage"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="channel"
+              options={{
+                headerShown: false,
+              }}
+              // initialParams={{ cid: channelId }} // Pass the CID here
+            />
+            <Stack.Screen
+              name="screens/profile"
+              options={{
+                headerShown: true,
+                title: "Profile",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/notifications"
+              options={{
+                headerShown: true,
+                title: "Notification",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/PinnedMessages"
+              options={{
+                headerShown: true,
+                title: "Pinned Messages",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/SavedMessages"
+              options={{
+                headerShown: true,
+                title: "Saved Messages",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/notificationSettings"
+              options={{
+                headerShown: true,
+                title: "Manage Notification",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/changePassword"
+              options={{
+                headerShown: true,
+                title: "Change Password",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/ThreadScreen"
+              options={{
+                headerShown: true,
+                title: "Thread",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/privacypolicy"
+              options={{
+                headerShown: true,
+                title: "Privacy Policy",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/ModeratorInInterest"
+              options={{
+                headerShown: true,
+                title: "Moderator in interest",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/BlockedList"
+              options={{
+                headerShown: true,
+                title: "Blocked List",
+                headerBackTitle: "back",
+              }}
+            />
+            <Stack.Screen
+              name="screens/termscondition"
+              options={{
+                headerShown: true,
+                title: "Terms & Conditions",
+                headerBackTitle: "back",
+              }}
+            />
 
-          <Stack.Screen
-            name="screens/createInterest"
-            options={{
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: "#fff", // Customize background color
-              },
-              // headerTintColor: "#333", // Customize text/icon color
-              headerTitleStyle: {
-                // fontSize: 20,
-                // fontWeight: "bold",
-                // padding: 34
-              },
-              headerTitle: "Create Interest", // Custom title
-              // headerRight: () => (
-              //   <MaterialIcons
-              //     name="add"
-              //     size={24}
-              //     style={{ marginRight: 10 }}
-              //     onPress={() => console.log("Add pressed")}
-              //   />
-              // ),
-            }}
-          />
-        </Stack>
-        {/* <Slot /> */}
+            <Stack.Screen
+              name="screens/createInterest"
+              options={{
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "#fff", // Customize background color
+                },
+                // headerTintColor: "#333", // Customize text/icon color
+                headerTitleStyle: {
+                  // fontSize: 20,
+                  // fontWeight: "bold",
+                  // padding: 34
+                },
+                headerTitle: "Create Interest", // Custom title
+                // headerRight: () => (
+                //   <MaterialIcons
+                //     name="add"
+                //     size={24}
+                //     style={{ marginRight: 10 }}
+                //     onPress={() => console.log("Add pressed")}
+                //   />
+                // ),
+              }}
+            />
+          </Stack>
+          {/* <Slot /> */}
+        </NotificationsProvider>
       </ChatProvider>
     </SafeAreaWrapper>
   );

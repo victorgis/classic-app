@@ -8,6 +8,8 @@ import { Chat, OverlayProvider } from "stream-chat-expo";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "../lib/supabase";
 import { tokenProvider } from "../utils/tokenProvider";
+import { SqliteClient } from "stream-chat-expo";
+import FastImage from "react-native-fast-image";
 
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY);
 
@@ -40,6 +42,10 @@ export default function ChatProvider({ children }: PropsWithChildren) {
 
     return () => {
       client.disconnectUser();
+      const load = async () => {
+        await SqliteClient.resetDB();
+      };
+      load()
       setIsReady(false);
     };
   }, [profile?.id]);
