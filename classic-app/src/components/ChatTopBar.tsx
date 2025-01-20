@@ -16,11 +16,13 @@ import { useLocalSearchParams } from "expo-router";
 import { useChatContext } from "stream-chat-expo";
 import { useAppContext } from "@/src/providers/AppProvider";
 import { shortenString } from "@/utils/shortenString";
+import { useAuth } from "../providers/AuthProvider";
 
 const logo = require("../../assets/images/logo.png");
 
 const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
   const { client } = useChatContext();
+  const { user } = useAuth();
   const { cid, name, online, lastseen, id } = useLocalSearchParams<{
     cid: string;
     name: string;
@@ -130,7 +132,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
           />
         </View>
 
-        {channel && (
+        {name && (
           <View
             style={{
               flex: 1,
@@ -157,10 +159,13 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
               />
               <View>
                 <Text style={{ fontSize: 15, color: "#262626" }}>
-                  {chatName ? chatName : shortenString(name)}
+                  {/* {chatName ? chatName : shortenString(name)} */}
+                  {shortenString(name)}
                 </Text>
 
-                {!chatName && (
+                {chatName ? (
+                  ""
+                ) : (
                   <View
                     style={{
                       flexDirection: "row", // Arrange items horizontally
@@ -202,7 +207,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
       </View>
       {showChatOptions && (
         <View style={styles.options}>
-          {clauseName && (
+          {clauseName ? (
             <TouchableOpacity onPress={() => leaveChannel()}>
               <Text
                 style={{
@@ -216,9 +221,7 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
                 Leave Channel
               </Text>
             </TouchableOpacity>
-          )}
-
-          {!clauseName && (
+          ) : (
             <TouchableOpacity onPress={() => reportUser(chatUserId, reason)}>
               <Text
                 style={{
@@ -231,6 +234,8 @@ const ChatTopBar = ({ showChatOptions, setShowChatOptions }: any) => {
               </Text>
             </TouchableOpacity>
           )}
+
+          {/* {clauseName && } */}
         </View>
       )}
     </View>

@@ -33,6 +33,7 @@ import ChatTopBar from "@/src/components/ChatTopBar";
 import { MaterialIcons } from "@expo/vector-icons";
 import { decryptMessage } from "@/utils/decryptTextUtil";
 import { useAppContext } from "@/src/providers/AppProvider";
+import LoadingActivity from "@/src/components/LoadingActivity";
 
 export default function ChannelScreen() {
   const [channel, setChannel] = useState<ChannelList | null>(null);
@@ -71,10 +72,10 @@ export default function ChannelScreen() {
       // console.log("membersDetails", membersDetails);
 
       if (memberIds.includes(myID)) {
-        // console.log(`${myID} is in the interestArray`);
+        console.log(`${myID} is in the interestArray`);
         setShowInput(true);
       } else {
-        // console.log(`${myID} is not in the interestArray`);
+        console.log(`${myID} is not in the interestArray`);
         setShowInput(false);
       }
 
@@ -85,7 +86,7 @@ export default function ChannelScreen() {
   }, [cid]);
 
   if (!channel) {
-    return <ActivityIndicator />;
+    return <LoadingActivity />;
   }
 
   const addMember = async () => {
@@ -127,6 +128,7 @@ export default function ChannelScreen() {
 
       <Channel
         channel={channel}
+        audioRecordingEnabled
         // MessageText={CustomMessageComponent}
         // Input={CustomInput}
 
@@ -238,7 +240,7 @@ export default function ChannelScreen() {
                 {
                   backgroundColor: "#ccc",
                   padding: RFValue(8),
-                  marginBottom: RFValue(18),
+                  marginBottom: RFValue(80),
                 },
               ]}
             >

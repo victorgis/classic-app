@@ -1,4 +1,3 @@
-
 import { Stack, router, Redirect } from "expo-router";
 import "react-native-reanimated";
 import ChatProvider from "@/src/providers/ChatProvider";
@@ -12,7 +11,6 @@ export default function ScreensLayout() {
 
   return (
     <ChatProvider>
-      {/* Corrected from AppContext to AppProvider */}
       <Stack>
         <Stack.Screen
           name="chat"
@@ -122,7 +120,7 @@ export default function ScreensLayout() {
           name="screens/privacypolicy"
           options={{
             headerShown: true,
-            title: "Notifications",
+            title: "Privacy Policy",
             headerBackTitle: "back",
           }}
         />
@@ -136,8 +134,5 @@ export default function ScreensLayout() {
         />
       </Stack>
     </ChatProvider>
-    //  </AppProvider>
-    // </AuthProvider>
-    // </GestureHandlerRootView>
   );
 }
